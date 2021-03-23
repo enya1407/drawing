@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import drawing from "../src/image/обмерочный-чертеж.jpg";
 import lock from "../src/image/lock.svg";
 import "./App.css";
-import DrawPane from "./DrawPane";
+import DrawPane from "./App2";
 import { Layer, Line, Rect, Stage, Shape } from "react-konva";
 import { Button, Switch } from "antd";
 import { KonvaEventObject } from "konva/types/Node";
@@ -14,6 +14,9 @@ const App = () => {
     end: boolean;
   };
 
+  const [cursorCoordinates, setCursorCoordinates] = useState<number[] | null>(
+    null
+  );
   const [elements, setElements] = useState<Array<ElementType>>([]);
   const [selectedElementIndex, setSelectedElementIndex] = useState<
     Array<number>
@@ -40,6 +43,7 @@ const App = () => {
         !elements[elements.length - 1]?.end
       ) {
         const { x, y } = getScaledPoint(stage, scale);
+
         setElements([
           ...elements.slice(0, -1),
           {
@@ -72,6 +76,10 @@ const App = () => {
         }
       }
     }
+  };
+
+  const onMouseMove = (e: KonvaEventObject<MouseEvent>) => {
+    setCursorCoordinates([e.evt.clientX, e.evt.clientY]);
   };
   const handlerPressingTheLock = () => {
     setElements([
@@ -137,6 +145,10 @@ const App = () => {
           left: elements[elements.length - 1].points[0][0] + 40,
         }
       : { display: "none" };
+  const konvaContainerStyle = drawingMode
+    ? "konva-container"
+    : "figure-movement-mode konva-container";
+
   return (
     <div className="main-layout">
       <div className="panelWithButtons">
@@ -177,17 +189,39 @@ const App = () => {
       </div>
       <Stage
         ref={setStageRef}
-        className="konva-container"
-        width={window.innerWidth - 200}
+        className={konvaContainerStyle}
+        width={window.innerWidth - 100}
         height={window.innerHeight}
         style={{
           backgroundImage: `url(${drawing})`,
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
+          backgroundSize: "contain",
         }}
         onMouseDown={(e) => onMouseDown(e)}
+        onMouseMove={(e) => onMouseMove(e)}
       >
         <Layer>
+          {cursorCoordinates && drawingMode && (
+            <React.Fragment>
+              <Line
+                x={0}
+                y={cursorCoordinates[1] - 73}
+                points={[0, 0, window.innerWidth, 0]}
+                stroke="blue"
+                strokeWidth={0.5}
+                dash={[3, 3]}
+              />
+              <Line
+                x={cursorCoordinates[0] - 41}
+                y={0}
+                points={[0, window.innerHeight, 0, 0]}
+                stroke="blue"
+                strokeWidth={0.5}
+                dash={[3, 3]}
+              />
+            </React.Fragment>
+          )}
           {elements.map((el, index) => {
             const fillColor = el.end ? "#80808021" : "#11ffee00";
             return (
@@ -209,7 +243,7 @@ const App = () => {
                     ? "red"
                     : "blue"
                 }
-                strokeWidth={0.5}
+                strokeWidth={1}
                 draggable={!drawingMode}
               />
             );

@@ -1,6 +1,13 @@
 body {
     background-color: #f0f0f0;
 }
+.konva-container{
+    cursor:none
+
+}
+.figure-movement-mode{
+    cursor: move
+}
 .lock{
     position: absolute;
 }
