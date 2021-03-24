@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import drawing from "../src/image/обмерочный-чертеж.jpg";
 import lock from "../src/image/lock.svg";
 import "./App.css";
 import DrawPane from "./App2";
-import { Layer, Line, Rect, Stage, Shape } from "react-konva";
+import { Layer, Line, Rect, Stage, Shape, Transformer } from "react-konva";
 import { Button, Switch } from "antd";
 import { KonvaEventObject } from "konva/types/Node";
+import ShapeDrawing from "./ShapeDrawing";
 
 const App = () => {
   type ElementType = {
@@ -81,6 +82,7 @@ const App = () => {
   const onMouseMove = (e: KonvaEventObject<MouseEvent>) => {
     setCursorCoordinates([e.evt.clientX, e.evt.clientY]);
   };
+
   const handlerPressingTheLock = () => {
     setElements([
       ...elements.slice(0, -1),
@@ -89,6 +91,22 @@ const App = () => {
         end: true,
       },
     ]);
+    setDrawingMode(false);
+    if (cursorCoordinates) console.log(elements[0]);
+  };
+
+  const handlerPressingFirstPoint = (index: number) => {
+    if (index === 0) {
+      setElements([
+        ...elements.slice(0, -1),
+        {
+          ...elements[elements.length - 1],
+          end: true,
+        },
+      ]);
+      setDrawingMode(false);
+      if (cursorCoordinates) console.log(elements[0]);
+    }
   };
 
   const handlerForNullify = () => {
@@ -141,10 +159,27 @@ const App = () => {
     elements[elements.length - 1]?.start &&
     !elements[elements.length - 1]?.end
       ? {
-          top: elements[elements.length - 1].points[0][1] + 40,
-          left: elements[elements.length - 1].points[0][0] + 40,
+          top: elements[elements.length - 1].points[0][1] + 70,
+          left: elements[elements.length - 1].points[0][0] + 38,
+          cursor: "pointer",
         }
       : { display: "none" };
+
+  const styleRound = (index: number) => {
+    const style =
+      drawingMode &&
+      elements[elements.length - 1]?.start &&
+      !elements[elements.length - 1]?.end
+        ? {
+            top: elements[elements.length - 1].points[index][1] + 70,
+            left: elements[elements.length - 1].points[index][0] + 38,
+          }
+        : { display: "none" };
+    return index === 0
+      ? { ...style, backgroundColor: "red", cursor: "pointer" }
+      : style;
+  };
+
   const konvaContainerStyle = drawingMode
     ? "konva-container"
     : "figure-movement-mode konva-container";
@@ -223,28 +258,20 @@ const App = () => {
             </React.Fragment>
           )}
           {elements.map((el, index) => {
-            const fillColor = el.end ? "#80808021" : "#11ffee00";
             return (
-              <Shape
-                id={`shape-${index}`}
-                sceneFunc={(context, shape) => {
-                  context.beginPath();
-                  el.points.map((el) => {
-                    context.lineTo(el[0], el[1]);
-                  });
-                  if (el.end) {
-                    context.closePath();
-                  }
-                  context.fillStrokeShape(shape);
+              <ShapeDrawing
+                key={index}
+                index={index}
+                shapeEl={el}
+                isSelected={selectedElementIndex.length > 0}
+                drawingMode
+                selectedElementIndex={selectedElementIndex}
+                setSelectedElementIndex={setSelectedElementIndex}
+                onChange={(newAttrs: any) => {
+                  const rects = elements.slice();
+                  rects[index] = newAttrs;
+                  setElements(rects);
                 }}
-                fill={fillColor}
-                stroke={
-                  !drawingMode && selectedElementIndex?.includes(index)
-                    ? "red"
-                    : "blue"
-                }
-                strokeWidth={1}
-                draggable={!drawingMode}
               />
             );
           })}
@@ -257,6 +284,17 @@ const App = () => {
         onClick={handlerPressingTheLock}
         style={styleLock}
       ></img>
+      {elements[elements.length - 1] &&
+        elements[elements.length - 1].points.map((el, index) => {
+          return (
+            <div
+              className="round"
+              style={styleRound(index)}
+              key={index}
+              onClick={() => handlerPressingFirstPoint(index)}
+            ></div>
+          );
+        })}
     </div>
   );
 };

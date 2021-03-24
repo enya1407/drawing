@@ -36,6 +36,15 @@ body {
     border: 1px solid #ccc;
 
 }
+.round{
+    width: 5px;
+    height: 5px;
+    border: 1px solid blue;
+    background-color: blue;
+    border-radius: 50%;
+    position: absolute;
+    cursor:none
+}
 
 /*.toolbar {*/
 /*    position: relative;*/
