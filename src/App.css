@@ -1,49 +1,6 @@
-body {
-    background-color: #f0f0f0;
-}
-.konva-container{
-    cursor:none
-
-}
-.figure-movement-mode{
-    cursor: move
-}
-.lock{
-    position: absolute;
-}
-.App {
-    width: 100%;
-    height: 100%;
-    font-family: sans-serif;
-    text-align: center;
-}
-
-.main-layout {
-    background-color: #fff;
-    display: flex;
-    flex-direction: column;
-    padding: 20px 40px;
-
-}
-.panelWithButtons{
-    margin-bottom: 20px;
-
-}
-.button{
-    margin-right: 20px;
-}
-.konva-container {
-    border: 1px solid #ccc;
-
-}
-.round{
-    width: 5px;
-    height: 5px;
-    border: 1px solid blue;
-    background-color: blue;
-    border-radius: 50%;
-    position: absolute;
-    cursor:none
+.wrapper{
+    max-width: 1200px;
+    margin: 20px;
 }
 
 /*.toolbar {*/

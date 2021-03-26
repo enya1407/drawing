@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Shape, Transformer } from "react-konva";
+import style from "./FloorPlans.module.css";
 
 type ElementType = {
   start: boolean;
@@ -35,27 +36,28 @@ const ShapeDrawing = ({
   //   }
   // }, [isSelected]);
   //
-  // const click = () => {
-  //   console.log("clic", index);
-  //   if (selectedElementIndex?.includes(index)) {
-  //     setSelectedElementIndex([
-  //       ...selectedElementIndex?.filter(
-  //         (el, i) => selectedElementIndex[i] !== index
-  //       ),
-  //     ]);
-  //   } else if (!selectedElementIndex.length) {
-  //     setSelectedElementIndex([index]);
-  //   } else {
-  //     setSelectedElementIndex([...selectedElementIndex, index]);
-  //   }
-  // };
+  const click = () => {
+    // console.log("clic", index);
+    // if (selectedElementIndex?.includes(index)) {
+    //   setSelectedElementIndex([
+    //     ...selectedElementIndex?.filter(
+    //       (el, i) => selectedElementIndex[i] !== index
+    //     ),
+    //   ]);
+    // } else if (!selectedElementIndex.length) {
+    //   setSelectedElementIndex([index]);
+    // } else {
+    //   setSelectedElementIndex([...selectedElementIndex, index]);
+    // }
+  };
+
   const fillColor = shapeEl.end ? "#80808021" : "#11ffee00";
   return (
     <React.Fragment>
       <Shape
-        // onClick={() => {
-        //   click();
-        // }}
+        onClick={() => {
+          click();
+        }}
         id={`shape-${index}`}
         sceneFunc={(context, shape) => {
           context.beginPath();
@@ -69,10 +71,10 @@ const ShapeDrawing = ({
         }}
         fill={fillColor}
         stroke={
-          drawingMode && selectedElementIndex?.includes(index) ? "red" : "blue"
+          !drawingMode && selectedElementIndex?.includes(index) ? "red" : "blue"
         }
         strokeWidth={1}
-        draggable={drawingMode}
+        draggable={!drawingMode}
         dash={[10, 5]}
         // ref={shapeRef}
         // {...shapeEl}

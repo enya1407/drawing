@@ -1,0 +1,60 @@
+.heading{
+    font-size: 20px;
+    font-weight: 600;
+}
+.wrapper{
+    margin: 0 20px 20px;
+}
+.section{
+    margin-top: 20px;
+}
+
+.form1{
+    flex-wrap: wrap;
+    display: flex;
+    justify-content: space-between;
+}
+
+.characteristicsWrapper{
+    flex-wrap: wrap;
+    display: flex;
+    justify-content: space-between;
+}
+.button{
+    margin-right: 20px;
+}
+.item{
+    width: 500px;
+}
+.placeForPhoto{
+    width: 500px;
+    height: 500px;
+    border: grey 1px dashed;
+    display:flex;align-items:center;
+    position: relative;
+}
+.building{
+    width: 400px;
+    height: 400px;
+    margin: auto;
+}
+.trashCan{
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    top:65px;
+    left:400px;
+}
+.trashCan:hover{
+    cursor: pointer;
+}
+.hidden{
+    display: none;
+}
+
+.form2 :global(.ant-form-item-label ){
+    display: inline-block;
+    width: 200px;
+    margin-right: 30px;
+    text-align: start;
+}
