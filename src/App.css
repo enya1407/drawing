@@ -1,6 +1,7 @@
 .wrapper{
     max-width: 1200px;
     margin: 20px;
+    height: calc(100vh - 40px);
 }
 
 /*.toolbar {*/
@@ -11,6 +12,7 @@
 /*    border-top-left-radius: 5px;*/
 /*    border-bottom-left-radius: 5px;*/
 /*}*/
+
 
 
 

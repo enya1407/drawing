@@ -167,15 +167,6 @@ const Building = () => {
         <p className={style.heading}>Комментарий</p>
         <TextArea autoSize={{ minRows: 2, maxRows: 6 }} />
       </section>
-      <section className={`${style.section} ${style.buttonWrapper}`}>
-        <Button type="primary" className={style.button}>
-          Сохранить
-        </Button>
-        <Button type="primary" className={style.button}>
-          Сохранить и выйти
-        </Button>
-        <Button className={style.button}>Отмена</Button>
-      </section>
     </div>
   );
 };
