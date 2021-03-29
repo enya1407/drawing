@@ -1,0 +1,31 @@
+.subMenu{
+    margin-bottom: 20px;
+}
+.button{
+
+    margin-left: 20px;
+    margin-bottom: 10px;
+
+}
+.menuItem :nth-child(2) {
+    display: inline-block;
+}
+.menuItem{
+    margin-left: 40px;
+
+}
+.menuItemEditMode{
+    margin-bottom: 30px;
+}
+
+.editing:hover{
+    cursor: pointer;
+}
+.menuItem:hover{
+    cursor: pointer;
+}
+.input{
+    width: 250px;
+    margin-left: 20px;
+    display: inline-block;
+}
