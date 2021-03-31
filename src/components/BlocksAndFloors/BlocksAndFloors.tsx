@@ -5,10 +5,6 @@ import { MenuUnfoldOutlined } from "@ant-design/icons";
 import SubMenu from "antd/es/menu/SubMenu";
 import Floor from "./Block/Floor";
 
-interface EnteredInputType {
-  floorNumber: string | null;
-  initialCost: string | null;
-}
 interface FloorsType {
   id: number;
   floorNumber: string | null;
@@ -16,27 +12,30 @@ interface FloorsType {
 }
 interface BlockType {
   id: number;
+  name: string | null;
   floors: FloorsType[] | [];
 }
+
 const BlocksAndFloors = () => {
   const [block, setBlock] = useState<BlockType[] | []>([]);
-  const [enteredInput, setEnteredInput] = useState<EnteredInputType>({
-    floorNumber: null,
-    initialCost: null,
-  });
-  const [editMode, setEditMode] = useState<boolean>(true);
+  const [enteredInput, setEnteredInput] = useState<string>("");
+  const [editMode, setEditMode] = useState<boolean[] | []>([]);
 
   const addBlock = () => {
     if (block.length === 0) {
-      setBlock([{ id: 0, floors: [] }]);
+      setBlock([{ id: 0, name: null, floors: [] }]);
+      setEditMode([true]);
     } else {
       const newBlock: BlockType = {
         id: block[block.length - 1].id + 1,
+        name: null,
         floors: [],
       };
       setBlock([...block, newBlock]);
+      setEditMode([...editMode, true]);
     }
   };
+
   const addFloors = (indexEl: number) => {
     const indexlastFloor =
       block[indexEl].floors[block[indexEl].floors.length - 1]?.id;
@@ -50,107 +49,89 @@ const BlocksAndFloors = () => {
     newBlockArr[indexEl] = newBlockObj;
     setBlock(newBlockArr);
   };
-  const changeButtonHandler = () => {};
-  const deleteButtonHandler = () => {
-    // const newFloorsArr = block[blockIndex].floors.filter(
-    //     (el, i) => i !== floorIndex
-    // );
-    // const newBlockObj = { ...block[blockIndex], floors: newFloorsArr };
-    // const newBlockArr = [...block];
-    // newBlockArr[blockIndex] = newBlockObj;
-    // setBlock(newBlockArr);
+  const changeButtonHandler = (blockIndex: number) => {
+    const newArr = [...editMode];
+    newArr[blockIndex] = true;
+    setEditMode(newArr);
+  };
+  const removeChangesHandler = (blockIndex: number) => {
+    const newArr = [...editMode];
+    newArr[blockIndex] = true;
+    setEditMode(newArr);
+    setEnteredInput("");
+  };
+  const deleteButtonHandler = (blockIndex: number) => {
+    const newBlockArr = block.filter((el, i) => i !== blockIndex);
+    setBlock(newBlockArr);
+    const newArr = editMode.filter((el, i) => i !== blockIndex);
+    setEditMode(newArr);
   };
 
-  const changeBlocs =
+  const saveChangesHandler = (blockIndex: number) => {
+    if (enteredInput.length > 0) {
+      const newBlockObj = { ...block[blockIndex], name: enteredInput };
+      const newBlockArr = [...block];
+      newBlockArr[blockIndex] = newBlockObj;
+      setBlock(newBlockArr);
+      const newArr = [...editMode];
+      newArr[blockIndex] = false;
+      setEditMode(newArr);
+    }
+  };
+  const blockNumber = (blockIndex: number) =>
+    editMode[blockIndex] ? (
+      <form className={style.inputContainer}>
+        {" "}
+        <Input
+          placeholder="Введите номер блока"
+          className={style.input}
+          onChange={(e) => {
+            setEnteredInput(e.target.value);
+          }}
+          required={true}
+        />
+        <Button
+          htmlType="submit"
+          type="primary"
+          className={style.button}
+          onClick={() => saveChangesHandler(blockIndex)}
+        >
+          Сохранить
+        </Button>
+        <Button
+          type="primary"
+          className={style.button}
+          onClick={() => removeChangesHandler(blockIndex)}
+        >
+          Удалить
+        </Button>
+      </form>
+    ) : (
+      <div className={style.inputContainer}>
+        {/*{" "}*/}
+        <span className={style.input}>{block[blockIndex].name} </span>
+      </div>
+    );
+
+  const changeBlocks = (blockIndex: number) =>
     block.length === 1 ? (
-      <div onClick={changeButtonHandler}>Изменить</div>
+      <div onClick={() => changeButtonHandler(blockIndex)}>Изменить</div>
     ) : (
       <div>
-        <div className={style.editing} onClick={changeButtonHandler}>
+        <div
+          className={style.editing}
+          onClick={() => changeButtonHandler(blockIndex)}
+        >
           Изменить
         </div>
-        <div className={style.editing} onClick={deleteButtonHandler}>
+        <div
+          className={style.editing}
+          onClick={() => deleteButtonHandler(blockIndex)}
+        >
           Удалить
         </div>
       </div>
     );
-
-  const blockNumber = () => {
-    if (editMode && block.length > 0) {
-      return (
-        <form className={style.inputContainer}>
-          {" "}
-          <Input
-            placeholder="Введите номер блока"
-            className={style.input}
-            onChange={(e) => {
-              // enteredInputHandler(e, "floorNumber");
-            }}
-            required={true}
-          />
-          <Button
-            htmlType="submit"
-            type="primary"
-            className={style.button}
-            // onClick={saveChangesHandler}
-          >
-            Сохранить
-          </Button>
-          <Button
-            type="primary"
-            className={style.button}
-            // onClick={removeChangesHandler}
-          >
-            Удалить
-          </Button>
-        </form>
-      );
-    } else {
-      return (
-        block &&
-        block.map((el: BlockType, blockIndex: number) => {
-          return (
-            <SubMenu
-              key={`sub${el.id + 1}`}
-              icon={
-                <Popover content={changeBlocs}>
-                  <MenuUnfoldOutlined />
-                </Popover>
-              }
-              className={
-                editMode
-                  ? style.menuItem
-                  : `${style.menuItemEditMode} ${style.menuItem}`
-              }
-              title={`Блок ${el.id + 1} `}
-            >
-              <Button
-                type="primary"
-                className={style.button2}
-                onClick={() => addFloors(0)}
-              >
-                Добавить этаж
-              </Button>
-
-              {block[0].floors &&
-                block[0].floors.map((el: FloorsType, floorIndex: number) => {
-                  return (
-                    <Floor
-                      key={floorIndex}
-                      el={el}
-                      blockIndex={0}
-                      floorIndex={floorIndex}
-                      block={block}
-                      setBlock={setBlock}
-                    ></Floor>
-                  );
-                })}
-            </SubMenu>
-          );
-        })
-      );
-    }
-  };
 
   return (
     <div>
@@ -163,7 +144,46 @@ const BlocksAndFloors = () => {
         mode="inline"
         className={style.subMenu}
       >
-        {blockNumber()}
+        {block.length > 0 &&
+          block.map((el: BlockType, blockIndex: number) => {
+            return (
+              <SubMenu
+                key={`sub${el.id + 1}`}
+                icon={
+                  <Popover content={() => changeBlocks(blockIndex)}>
+                    <MenuUnfoldOutlined />
+                  </Popover>
+                }
+                className={style.subMenu}
+                title={blockNumber(blockIndex)}
+              >
+                {!editMode[blockIndex] && (
+                  <Button
+                    type="primary"
+                    className={style.button2}
+                    onClick={() => addFloors(blockIndex)}
+                  >
+                    Добавить этаж
+                  </Button>
+                )}
+                {block[blockIndex].floors &&
+                  block[blockIndex].floors.map(
+                    (el: FloorsType, floorIndex: number) => {
+                      return (
+                        <Floor
+                          key={floorIndex}
+                          el={el}
+                          blockIndex={blockIndex}
+                          floorIndex={floorIndex}
+                          block={block}
+                          setBlock={setBlock}
+                        ></Floor>
+                      );
+                    }
+                  )}
+              </SubMenu>
+            );
+          })}
       </Menu>
     </div>
   );

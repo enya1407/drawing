@@ -11,7 +11,7 @@
     margin-left: 40px;
     margin-bottom: 20px;
 }
-.menuItem :nth-child(2) {
+.subMenu :global(.ant-menu-submenu-title ) :nth-child(2){
     display: inline-block;
 }
 .editing:hover{
@@ -20,4 +20,5 @@
 .input{
     width: 250px;
     margin-right: 20px;
+    display: inline-block;
 }

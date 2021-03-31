@@ -14,6 +14,7 @@ interface FloorsType {
 }
 interface BlockType {
   id: number;
+  name: string | null;
   floors: FloorsType[] | [];
 }
 interface PropType {
@@ -69,8 +70,9 @@ const Floor = ({ el, blockIndex, floorIndex, block, setBlock }: PropType) => {
     const newBlockArr = [...block];
     newBlockArr[blockIndex] = newBlockObj;
     setBlock(newBlockArr);
+    setEditMode(true);
   };
-
+  console.log(editMode);
   const changeFloors = editMode ? (
     <div className={style.editing} onClick={deleteButtonHandler}>
       Удалить
@@ -130,7 +132,7 @@ const Floor = ({ el, blockIndex, floorIndex, block, setBlock }: PropType) => {
       <div className={style.inputContainer}>
         {" "}
         <span className={style.input}>
-          {block[blockIndex].floors[floorIndex].floorNumber} этаж
+          {block[blockIndex].floors[floorIndex].floorNumber}
         </span>
         <span className={style.input}>
           {block[blockIndex].floors[floorIndex].initialCost} /м2 мес{" "}
