@@ -3,7 +3,7 @@ import drawing from "../../image/обмерочный-чертеж.jpg";
 import lock from "../../image/lock.svg";
 import style from "./FloorPlans.module.css";
 import { Layer, Line, Rect, Stage, Shape, Transformer } from "react-konva";
-import { Button, Switch } from "antd";
+import { Button, Form, Switch } from "antd";
 import { KonvaEventObject } from "konva/types/Node";
 import ShapeDrawing from "./ShapeDrawing";
 
@@ -156,8 +156,8 @@ const FloorPlans = () => {
     elements[elements.length - 1]?.start &&
     !elements[elements.length - 1]?.end
       ? {
-          top: elements[elements.length - 1].points[0][1] + 70,
-          left: elements[elements.length - 1].points[0][0] + 38,
+          top: elements[elements.length - 1].points[0][1] + 233,
+          left: elements[elements.length - 1].points[0][0] + 60,
           cursor: "pointer",
         }
       : { display: "none" };
@@ -168,8 +168,8 @@ const FloorPlans = () => {
       elements[elements.length - 1]?.start &&
       !elements[elements.length - 1]?.end
         ? {
-            top: elements[elements.length - 1].points[index][1] + 70,
-            left: elements[elements.length - 1].points[index][0] + 38,
+            top: elements[elements.length - 1].points[index][1] + 233,
+            left: elements[elements.length - 1].points[index][0] + 60,
           }
         : { display: "none" };
     return index === 0
@@ -238,14 +238,14 @@ const FloorPlans = () => {
             <React.Fragment>
               <Line
                 x={0}
-                y={cursorCoordinates[1] - 73}
+                y={cursorCoordinates[1] - 233}
                 points={[0, 0, window.innerWidth, 0]}
                 stroke="blue"
                 strokeWidth={0.5}
                 dash={[3, 3]}
               />
               <Line
-                x={cursorCoordinates[0] - 41}
+                x={cursorCoordinates[0] - 60}
                 y={0}
                 points={[0, window.innerHeight, 0, 0]}
                 stroke="blue"
@@ -262,8 +262,8 @@ const FloorPlans = () => {
                       elements[elements.length - 1].points[
                         elements[elements.length - 1].points.length - 1
                       ][1],
-                      cursorCoordinates[0] - 41,
-                      cursorCoordinates[1] - 73,
+                      cursorCoordinates[0] - 60,
+                      cursorCoordinates[1] - 233,
                     ]}
                     stroke="blue"
                     strokeWidth={1}

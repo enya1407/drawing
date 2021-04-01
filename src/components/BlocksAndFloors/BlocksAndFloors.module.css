@@ -11,8 +11,9 @@
     margin-left: 40px;
     margin-bottom: 20px;
 }
-.subMenu :global(.ant-menu-submenu-title ) :nth-child(2){
+.subMenu :global(.ant-menu-submenu-title ) :nth-child(2) div{
     display: inline-block;
+
 }
 .editing:hover{
     cursor: pointer;

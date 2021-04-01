@@ -32,51 +32,40 @@ const Building = () => {
     <div className={style.wrapper}>
       <section className={style.section}>
         <p className={style.heading}>Общая информация</p>
-        <Form
-          name="general information"
-          initialValues={{ remember: true }}
-          layout="vertical"
-          className={style.form1}
+        <Form.Item
+          className={style.item}
+          label="Название"
+          name="name"
+          rules={[
+            {
+              required: true,
+              message: "Please input your username!",
+            },
+          ]}
         >
-          <Form.Item
-            className={style.item}
-            label="Название"
-            name="Название"
-            rules={[
-              {
-                required: true,
-                message: "Please input your username!",
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            className={style.item}
-            label="Номер обьекта"
-            name="Номер обьекта"
-          >
-            <Input placeholder="Например кадастровый номер" />
-          </Form.Item>
-          <Form.Item
-            className={style.item}
-            label="Адрес"
-            name="Адрес"
-            rules={[{ required: true, message: "Please input your username!" }]}
-          >
-            <Input placeholder="Город, улица, номер дома, корпус" />
-          </Form.Item>
-        </Form>
+          <Input />
+        </Form.Item>
+        <Form.Item
+          className={style.item}
+          label="Номер обьекта"
+          name="objectNumber"
+        >
+          <Input placeholder="Например кадастровый номер" />
+        </Form.Item>
+        <Form.Item
+          className={style.item}
+          label="Адрес"
+          name="address"
+          rules={[{ required: true, message: "Please input your username!" }]}
+        >
+          <Input placeholder="Город, улица, номер дома, корпус" />
+        </Form.Item>
       </section>
       <section className={style.section}>
         <p className={style.heading}>Характеристики</p>
         <div className={style.characteristicsWrapper}>
-          <Form
-            name="characteristics"
-            initialValues={{ remember: true }}
-            className={style.form2}
-          >
-            <Form.Item className={`${style.item}`} label="Класс" name="Класс">
+          <div>
+            <Form.Item className={`${style.item}`} label="Класс" name="class">
               <Select defaultValue="Не присвоен" style={{ width: 200 }}>
                 <Option value="Не присвоен">Не присвоен</Option>
               </Select>
@@ -84,7 +73,7 @@ const Building = () => {
             <Form.Item
               className={style.item}
               label="Исполнение"
-              name="Исполнение"
+              name="execution"
             >
               <Select defaultValue="Не указано" style={{ width: 200 }}>
                 <Option value="Не указано">Не указано</Option>
@@ -93,7 +82,7 @@ const Building = () => {
             <Form.Item
               className={style.item}
               label="Собственник"
-              name="Собственник"
+              name="owner"
               rules={[
                 {
                   required: true,
@@ -107,9 +96,9 @@ const Building = () => {
             <Form.Item
               className={style.item}
               label="Полная площадь"
-              name="Полная площадь"
+              name="fullArea"
             >
-              <Input style={{ width: 100 }} />
+              <Input type="number" style={{ width: 100 }} />
               <span style={{ marginLeft: 5 }}>
                 м<sup>2</sup>
               </span>
@@ -117,9 +106,9 @@ const Building = () => {
             <Form.Item
               className={style.item}
               label="Арендопригодная площадь"
-              name="Арендопригодная площадь"
+              name="rentableArea"
             >
-              <Input style={{ width: 100 }} />
+              <Input type="number" style={{ width: 100 }} />
               <span style={{ marginLeft: 5 }}>
                 м<sup>2</sup>
               </span>
@@ -127,18 +116,18 @@ const Building = () => {
             <Form.Item
               className={style.item}
               label="Этажность"
-              name="Этажность"
+              name="numberOfStoreys"
             >
               <Input style={{ width: 100 }} />
             </Form.Item>
             <Form.Item
               className={style.item}
               label="Ввод в эксплуатацию"
-              name="Ввод в эксплуатацию"
+              name="commissioning"
             >
               <DatePicker placeholder="Выберите дату" />
             </Form.Item>
-          </Form>
+          </div>
           <div className={style.placeForPhoto}>
             <img src={building} className={styleBuilding} />{" "}
             <Popover content="Удалить изображение">
@@ -165,7 +154,9 @@ const Building = () => {
       <section className={style.section}>
         {" "}
         <p className={style.heading}>Комментарий</p>
-        <TextArea autoSize={{ minRows: 2, maxRows: 6 }} />
+        <Form.Item name="comment">
+          <TextArea autoSize={{ minRows: 2, maxRows: 6 }} />
+        </Form.Item>
       </section>
     </div>
   );
