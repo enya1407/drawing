@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import FloorPlans from "./FloorPlans/FloorPlans";
 import Squares from "./Squares/Squares";
 import BlocksAndFloors from "./BlocksAndFloors/BlocksAndFloors";
@@ -8,6 +8,9 @@ import { Button, Tabs, Form } from "antd";
 const { TabPane } = Tabs;
 
 const CardBuilding = () => {
+  const [activeTab, setActiveTab] = useState<string>("2");
+  const [form] = Form.useForm();
+
   return (
     <div className={style.wrapper}>
       <div className={style.tabsContainer}>
@@ -15,6 +18,7 @@ const CardBuilding = () => {
         <p>Минск, Ленина 35а</p>
 
         <Form
+          form={form}
           name="form"
           // onFieldsChange={(changedFields, allFields) => {
           //   console.log("fields", changedFields, allFields);
@@ -26,18 +30,21 @@ const CardBuilding = () => {
             console.log("finish", info);
           }}
           onValuesChange={(changedValues, allValues) => {
-            console.log("values", changedValues, allValues);
+            console.log("values", allValues);
           }}
         >
-          <Tabs defaultActiveKey="2">
+          <Tabs
+            activeKey={activeTab}
+            onChange={(key: string) => setActiveTab(key)}
+          >
             <TabPane tab="Здания" key="1">
               <Building />
             </TabPane>
             <TabPane tab="Блоки и этажи" key="2">
-              <BlocksAndFloors />
+              <BlocksAndFloors form={form} />
             </TabPane>
             <TabPane tab="Площади" key="3">
-              <Squares />
+              <Squares form={form} />
             </TabPane>
             <TabPane tab="Планы этажей" key="4">
               <FloorPlans />

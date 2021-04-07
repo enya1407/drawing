@@ -69,10 +69,12 @@ const ShapeDrawing = ({
           }
           context.fillStrokeShape(shape);
         }}
-        fill={fillColor}
-        stroke={
-          !drawingMode && selectedElementIndex?.includes(index) ? "red" : "blue"
+        fill={
+          !drawingMode && selectedElementIndex?.includes(index)
+            ? "#00000066"
+            : "#80808021"
         }
+        stroke="blue"
         strokeWidth={1}
         draggable={!drawingMode}
         dash={[10, 5]}

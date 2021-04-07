@@ -89,7 +89,7 @@ const Building = () => {
                 },
               ]}
             >
-              <Select defaultValue="Скороход Анастасия" style={{ width: 200 }}>
+              <Select style={{ width: 200 }}>
                 <Option value="Скороход Анастасия">Скороход Анастасия</Option>
               </Select>
             </Form.Item>

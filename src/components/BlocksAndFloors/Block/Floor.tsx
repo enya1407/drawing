@@ -1,167 +1,111 @@
 import React, { useState } from "react";
-import { Button, Input, Menu, Popover, Form } from "antd";
-import { MenuUnfoldOutlined } from "@ant-design/icons";
+import { Button, Input, Menu, Popover, Form, Space } from "antd";
+import {
+  MenuUnfoldOutlined,
+  PlusOutlined,
+  UpOutlined,
+} from "@ant-design/icons";
 import style from "./Floor.module.css";
 
-interface EnteredInputType {
-  floorNumber: string;
-  initialCost: string;
-}
-interface FloorsType {
-  id: number;
-  floorNumber: string | null;
-  initialCost: string | null;
-}
-interface BlockType {
-  id: number;
-  name: string | null;
-  floors: FloorsType[] | [];
-}
 interface PropType {
-  el: FloorsType;
-  blockIndex: number;
-  floorIndex: number;
-  block: BlockType[];
-  setBlock: any;
+  i: any;
+  name: any;
+  blockName: any;
+  restField: any;
+  remove: any;
+  form: any;
 }
-const Floor = ({ el, blockIndex, floorIndex, block, setBlock }: PropType) => {
-  const [enteredInput, setEnteredInput] = useState<EnteredInputType>({
-    floorNumber: "",
-    initialCost: "",
-  });
-  const [editMode, setEditMode] = useState<boolean>(true);
 
-  const enteredInputHandler = (e: any, input: string) => {
-    // input === "floorNumber"
-    //   ? setEnteredInput({ ...enteredInput, floorNumber: e.target.value })
-    //   : setEnteredInput({ ...enteredInput, initialCost: e.target.value });
-  };
+const Floor = ({ i, name, blockName, restField, remove, form }: PropType) => {
+  const [valueSaved, setValueSaved] = useState<boolean>(false);
 
-  const saveChangesHandler = () => {
-    if (
-      enteredInput.initialCost.trim().length > 0 &&
-      enteredInput.floorNumber.trim().length > 0
-    ) {
-      const newFloorData = {
-        ...block[blockIndex].floors[floorIndex],
-        floorNumber: enteredInput.floorNumber,
-        initialCost: enteredInput.initialCost,
-      };
-      const newFloorsArr = [...block[blockIndex].floors];
-      newFloorsArr[floorIndex] = newFloorData;
-      const newBlockObj = { ...block[blockIndex], floors: newFloorsArr };
-      const newBlockArr = [...block];
-      newBlockArr[blockIndex] = newBlockObj;
-      setBlock(newBlockArr);
-      setEditMode(false);
-      setEnteredInput({
-        floorNumber: "",
-        initialCost: "",
-      });
+  const saveChangesHandler = (name: number) => {
+    const data = form.getFieldValue(["blocks", blockName, "floors", name]);
+    console.log(data);
+
+    form.validateFields([
+      ["blocks", blockName, "floors", name, "floor"],
+      ["blocks", blockName, "floors", name, "cost"],
+    ]);
+
+    if (data?.floor?.trim().length > 0 && data.cost?.trim().length) {
+      setValueSaved(true);
     }
   };
 
-  const removeChangesHandler = () => {
-    setEnteredInput({ floorNumber: "", initialCost: "" });
-    setEditMode(false);
+  const popoverContent = (name: any, remove: any) => {
+    return !valueSaved ? (
+      <div className={style.editing} onClick={() => remove(name)}>
+        Удалить
+      </div>
+    ) : (
+      <div>
+        <div className={style.editing} onClick={() => setValueSaved(false)}>
+          Изменить
+        </div>
+        <div className={style.editing} onClick={() => remove(name)}>
+          Удалить
+        </div>
+      </div>
+    );
   };
 
-  const floorNumber = () =>
-    editMode ? (
-      <>
-        {/*<Form.Item className={style.inputContainer}>*/}
-        <Input
-          placeholder="Введите номер этажа"
-          className={style.input}
-          onChange={(e) => {
-            enteredInputHandler(e, "floorNumber");
-          }}
-          required={true}
-        />
-        <Input
-          placeholder="Введите первоначальную стоимость"
-          className={style.input}
-          onChange={(e) => {
-            enteredInputHandler(e, "initialCost");
-          }}
-          required={true}
-        />
-        {/*</Form.Item>*/}
+  return (
+    <Space
+      key={i}
+      style={{ display: "flex", marginBottom: 8 }}
+      align="baseline"
+    >
+      <Popover
+        content={() => popoverContent([name, `floor`], remove)}
+        trigger="click"
+      >
+        <MenuUnfoldOutlined />
+      </Popover>
+      <Form.Item
+        {...restField}
+        name={[name, `floor`]}
+        rules={[{ required: true, message: "Введите номер этажа" }]}
+      >
+        {!valueSaved ? (
+          <Input
+            placeholder="Введите номер этажа"
+            required={true}
+            className={style.input}
+          />
+        ) : (
+          <Input className={style.input} readOnly={true} bordered={false} />
+        )}
+      </Form.Item>
+      <Form.Item
+        {...restField}
+        name={[name, `cost`]}
+        rules={[
+          { required: true, message: "Введите первоначальную стоимость" },
+        ]}
+        type="number"
+      >
+        {!valueSaved ? (
+          <Input
+            placeholder="Введите первоначальную стоимость"
+            required={true}
+            className={style.input}
+          />
+        ) : (
+          <Input className={style.input} readOnly={true} bordered={false} />
+        )}
+      </Form.Item>
+
+      {!valueSaved && (
         <Button
-          htmlType="submit"
           type="primary"
           className={style.button}
-          onClick={saveChangesHandler}
+          onClick={() => saveChangesHandler(name)}
         >
           Сохранить
         </Button>
-        <Button
-          type="primary"
-          className={style.button}
-          onClick={removeChangesHandler}
-        >
-          Удалить
-        </Button>
-      </>
-    ) : (
-      <div className={style.inputContainer}>
-        <span className={style.input}>
-          {block[blockIndex].floors[floorIndex].floorNumber}
-        </span>
-        <span className={style.input}>
-          {block[blockIndex].floors[floorIndex].initialCost} /м2 мес{" "}
-        </span>
-      </div>
-    );
-
-  const changeButtonHandler = () => {
-    setEditMode(true);
-  };
-
-  const deleteButtonHandler = () => {
-    const newFloorsArr = block[blockIndex].floors.filter(
-      (el, i) => i !== floorIndex
-    );
-    const newBlockObj = { ...block[blockIndex], floors: newFloorsArr };
-    const newBlockArr = [...block];
-    newBlockArr[blockIndex] = newBlockObj;
-    setBlock(newBlockArr);
-    setEditMode(true);
-  };
-
-  const popoverContent = editMode ? (
-    <div className={style.editing} onClick={deleteButtonHandler}>
-      Удалить
-    </div>
-  ) : (
-    <div>
-      <div className={style.editing} onClick={changeButtonHandler}>
-        Изменить
-      </div>
-      <div className={style.editing} onClick={deleteButtonHandler}>
-        Удалить
-      </div>
-    </div>
-  );
-
-  console.log("floor render");
-
-  return (
-    // <Menu.Item
-    //   key={el.id}
-    //   icon={
-    //     <Popover content={popoverContent}>
-    //       <MenuUnfoldOutlined />
-    //     </Popover>
-    //   }
-    //   className={
-    //     editMode
-    //       ? style.menuItem
-    //       : `${style.menuItemEditMode} ${style.menuItem}`
-    //   }
-    // >
-    // </Menu.Item>
-    <>{floorNumber()}</>
+      )}
+    </Space>
   );
 };
 export default Floor;

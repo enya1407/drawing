@@ -1,6 +1,4 @@
-.subMenu{
-    margin-bottom: 20px;
-}
+
 .button{
 
     margin-right: 20px;
@@ -11,15 +9,15 @@
     margin-left: 40px;
     margin-bottom: 20px;
 }
-.subMenu :global(.ant-menu-submenu-title ) :nth-child(2) div{
-    display: inline-block;
 
-}
-.editing:hover{
-    cursor: pointer;
-}
 .input{
     width: 250px;
     margin-right: 20px;
     display: inline-block;
+}
+.formListFloor{
+    margin-left: 100px;
+}
+.editing:hover{
+    cursor: pointer;
 }

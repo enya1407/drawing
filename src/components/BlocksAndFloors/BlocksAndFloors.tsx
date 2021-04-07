@@ -1,252 +1,260 @@
 import React, { useState } from "react";
 import { Button, Form, Input, Menu, Popover, Space } from "antd";
 import style from "./BlocksAndFloors.module.css";
-import { MenuUnfoldOutlined } from "@ant-design/icons";
+import { MenuUnfoldOutlined, UpOutlined } from "@ant-design/icons";
 import SubMenu from "antd/es/menu/SubMenu";
 import Floor from "./Block/Floor";
-import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  MinusCircleOutlined,
+  PlusOutlined,
+  DownOutlined,
+} from "@ant-design/icons";
 
-interface FloorsType {
-  id: number;
-  floorNumber: string | null;
-  initialCost: string | null;
-}
 interface BlockType {
-  id: number;
-  name: string | null;
-  floors: FloorsType[];
+  savedField: number[];
+  floorsVisible: number[];
 }
+interface PropType {
+  form: any;
+}
+const BlocksAndFloors = ({ form }: PropType) => {
+  const [valueEnteredBlock, setValueEnteredBlock] = useState<BlockType>({
+    savedField: [],
+    floorsVisible: [],
+  });
 
-const BlocksAndFloors = () => {
-  const [block, setBlock] = useState<BlockType[]>([]);
-  const [enteredInput, setEnteredInput] = useState<string>("");
-  const [valueEntered, setValueEntered] = useState<number[]>([]);
+  const addBlock = (add: any, fields: any) => {
+    const amountElements = fields?.length;
 
-  const addBlock = (key: number, add: any) => {
-    // if (block.length === 0) {
-    //   setBlock([{ id: 0, name: null, floors: [] }]);
-    //   setEditMode([true]);
-    // } else {
-    //   const newBlock: BlockType = {
-    //     id: block[block.length - 1].id + 1,
-    //     name: null,
-    //     floors: [],
-    //   };
-    //   setBlock([...block, newBlock]);
-    //   setEditMode([...editMode, true]);
-    // }
+    add();
+
+    setValueEnteredBlock({
+      ...valueEnteredBlock,
+      floorsVisible: [...valueEnteredBlock.floorsVisible, amountElements],
+    });
   };
 
-  const addFloors = (blockIndex: number) => {
-    const idLastFloor =
-      block[blockIndex].floors[block[blockIndex].floors.length - 1]?.id;
-    const newFloors: FloorsType =
-      block[blockIndex].floors.length > 0
-        ? { id: idLastFloor + 1, floorNumber: null, initialCost: null }
-        : { id: 0, floorNumber: null, initialCost: null };
-    const newFloorArr = [...block[blockIndex].floors, newFloors];
-    const newBlockObj = { ...block[blockIndex], floors: newFloorArr };
-    const newBlockArr = [...block];
-    newBlockArr[blockIndex] = newBlockObj;
-    setBlock(newBlockArr);
+  const saveChangesHandler = (name: number) => {
+    const blocksData = form.getFieldValue([`blocks`, name, `block`]);
+
+    form.validateFields([[`blocks`, name, `block`]]);
+
+    if (blocksData?.trim().length > 0) {
+      const newSavedFieldArr = [...valueEnteredBlock.savedField, name];
+      setValueEnteredBlock({
+        ...valueEnteredBlock,
+        savedField: newSavedFieldArr,
+      });
+    }
   };
 
-  const saveChangesHandler = (key: number) => {
-    // if (enteredInput.trim().length > 0) {
-    //   const newBlockObj = { ...block[blockIndex], name: enteredInput };
-    //   const newBlockArr = [...block];
-    //   newBlockArr[blockIndex] = newBlockObj;
-    //   setBlock(newBlockArr);
-    //   const newArr = [...editMode];
-    //   newArr[blockIndex] = false;
-    //   setEditMode(newArr);
-    //   setEnteredInput("");
-    // }
-
-    setValueEntered([...valueEntered, key]);
-  };
-  console.log(valueEntered);
-
-  const removeChangesHandler = (key: number) => {
-    // const newArr = [...editMode];
-    // newArr[blockIndex] = true;
-    // setEditMode(newArr);
-    // setEnteredInput("");
-    setValueEntered([...valueEntered, key]);
+  const changeButtonHandler = (name: number) => {
+    const newSavedFieldArr = valueEnteredBlock.savedField.filter(
+      (el) => el !== name
+    );
+    setValueEnteredBlock({
+      ...valueEnteredBlock,
+      savedField: newSavedFieldArr,
+    });
   };
 
-  const blockNumber = (blockIndex: number) => (
-    <div className={style.inputContainer}>
-      <Form.Item name={`block ${blockIndex + 1}`}>
-        {valueEntered[blockIndex] ? (
-          <Input
-            placeholder="Введите номер блока"
-            required={true}
-            className={style.input}
-            onChange={(e) => {
-              setEnteredInput(e.target.value);
-            }}
-          />
-        ) : (
-          <Input className={style.input} readOnly={true} bordered={false} />
-        )}
-      </Form.Item>
-      {valueEntered[blockIndex] && (
-        <>
-          <Button
-            type="primary"
-            className={style.button}
-            // onClick={() => saveChangesHandler(blockIndex)}
-          >
-            Сохранить
-          </Button>
-          <Button
-            type="primary"
-            className={style.button}
-            // onClick={() => removeChangesHandler(blockIndex)}
-          >
-            Удалить
-          </Button>
-        </>
-      )}
-    </div>
-  );
+  const deleteButtonHandler = (name: any, remove: any) => {
+    remove(name);
 
-  const changeButtonHandler = (key: number) => {
-    // const newArr = [...editMode];
-    // newArr[blockIndex] = true;
-    const newArr = valueEntered.filter((el) => el !== key);
-    setValueEntered([...newArr]);
+    const newSavedFieldArr = [
+      ...valueEnteredBlock.savedField.filter((el) => el !== name),
+    ];
+    newSavedFieldArr.map((el: number, i: number) => {
+      if (el > name) {
+        newSavedFieldArr[i] = el - 1;
+      }
+    });
+
+    const newFloorsVisibleArr = [
+      ...valueEnteredBlock.floorsVisible.filter((el) => el !== name),
+    ];
+    newFloorsVisibleArr.map((el: number, i: number) => {
+      if (el > name) {
+        newFloorsVisibleArr[i] = el - 1;
+      }
+    });
+
+    setValueEnteredBlock({
+      savedField: newSavedFieldArr,
+      floorsVisible: newFloorsVisibleArr,
+    });
   };
 
-  const deleteButtonHandler = (key: number, remove: any) => {
-    console.log("key", key);
-    remove(key);
-
-    const newArr = valueEntered.filter((el) => el !== key);
-    setValueEntered([...newArr]);
-
-    // const newBlockArr = block.filter((el, i) => i !== blockIndex);
-    //     // setBlock(newBlockArr);
-    //     // const newArr = valueEntered.filter((el, i) => i !== blockIndex);
-    //     // setValueEntered(newArr);
-  };
-
-  const popoverContent = (key: number, remove: any) =>
-    !valueEntered.includes(key) ? (
-      <div onClick={() => deleteButtonHandler(key, remove)}>Удалить</div>
+  const popoverContent = (name: any, remove: any) => {
+    return !valueEnteredBlock.savedField.includes(name) ? (
+      <div
+        className={style.editing}
+        onClick={() => deleteButtonHandler(name, remove)}
+      >
+        Удалить
+      </div>
     ) : (
       <div>
-        <div className={style.editing} onClick={() => changeButtonHandler(key)}>
+        <div
+          className={style.editing}
+          onClick={() => changeButtonHandler(name)}
+        >
           Изменить
         </div>
         <div
           className={style.editing}
-          onClick={() => deleteButtonHandler(key, remove)}
+          onClick={() => deleteButtonHandler(name, remove)}
         >
           Удалить
         </div>
       </div>
     );
+  };
+
+  const outlinedHandler = (name: number) => {
+    if (valueEnteredBlock.floorsVisible.includes(name)) {
+      const newFloorsVisible = valueEnteredBlock.floorsVisible.filter(
+        (el) => el !== name
+      );
+
+      setValueEnteredBlock({
+        ...valueEnteredBlock,
+        floorsVisible: newFloorsVisible,
+      });
+    } else {
+      const newFloorsVisible = [...valueEnteredBlock.savedField, name];
+      setValueEnteredBlock({
+        ...valueEnteredBlock,
+        floorsVisible: newFloorsVisible,
+      });
+    }
+  };
 
   return (
     <Form.List name="blocks">
       {(fields, { add, remove }) => (
         <>
           <Form.Item>
-            <Button type="dashed" onClick={() => add()} icon={<PlusOutlined />}>
+            <Button
+              type="dashed"
+              onClick={() => addBlock(add, fields)}
+              icon={<PlusOutlined />}
+            >
               Добавить блок
             </Button>
           </Form.Item>
-          {fields.map(({ key, name, fieldKey, ...restField }) => (
+          {fields.map(({ key, name: blockName, fieldKey, ...restField }) => (
             <Space
               key={key}
-              style={{ display: "flex", marginBottom: 8 }}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                marginBottom: 8,
+              }}
               align="baseline"
             >
-              <Popover
-                content={() => popoverContent(fieldKey, remove)}
-                trigger="click"
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-around",
+                }}
               >
-                <MenuUnfoldOutlined />
-              </Popover>
-              <Form.Item
-                {...restField}
-                name={[name, `блок ${fieldKey + 1}`]}
-                rules={[{ required: true, message: "Заполните это поле" }]}
-              >
-                {console.log(fields)}
-                {!valueEntered.includes(fieldKey) ? (
-                  <Input placeholder="Введите номер блока" required={true} />
+                {valueEnteredBlock.floorsVisible.includes(blockName) ? (
+                  <UpOutlined
+                    onClick={() => outlinedHandler(blockName)}
+                    style={{
+                      marginRight: 20,
+                      fontSize: 15,
+                      lineHeight: 2,
+                    }}
+                  />
                 ) : (
-                  <Input
-                    className={style.input}
-                    readOnly={true}
-                    bordered={false}
+                  <DownOutlined
+                    onClick={() => outlinedHandler(blockName)}
+                    style={{
+                      marginRight: 20,
+                      fontSize: 15,
+                      lineHeight: 2,
+                    }}
                   />
                 )}
-              </Form.Item>
-              {!valueEntered.includes(fieldKey) && (
-                <Button
-                  type="primary"
-                  className={style.button}
-                  onClick={() => saveChangesHandler(fieldKey)}
+                <Popover
+                  content={() => popoverContent(blockName, remove)}
+                  trigger="click"
                 >
-                  Сохранить
-                </Button>
-              )}
+                  <MenuUnfoldOutlined
+                    style={{
+                      marginRight: 20,
+                      fontSize: 15,
+                      lineHeight: 2,
+                    }}
+                  />
+                </Popover>
+                <Form.Item
+                  {...restField}
+                  name={[blockName, `block`]}
+                  rules={[{ required: true, message: "Введите номер блока" }]}
+                >
+                  {!valueEnteredBlock.savedField.includes(blockName) ? (
+                    <Input
+                      placeholder="Введите номер блока"
+                      required={true}
+                      className={style.input}
+                    />
+                  ) : (
+                    <Input
+                      className={style.input}
+                      readOnly={true}
+                      bordered={false}
+                    />
+                  )}
+                </Form.Item>
+                {!valueEnteredBlock.savedField.includes(blockName) && (
+                  <Button
+                    type="primary"
+                    className={style.button}
+                    onClick={() => saveChangesHandler(blockName)}
+                  >
+                    Сохранить
+                  </Button>
+                )}
+              </div>
+              <div className={style.formListFloor}>
+                {valueEnteredBlock.savedField.includes(blockName) && (
+                  <Form.List name={[blockName, `floors`]}>
+                    {(fieldsFloor, { add, remove }) => (
+                      <>
+                        <Form.Item>
+                          <Button
+                            type="dashed"
+                            onClick={() => add()}
+                            icon={<PlusOutlined />}
+                          >
+                            Добавить этаж
+                          </Button>
+                        </Form.Item>
+                        {valueEnteredBlock.floorsVisible.includes(blockName) &&
+                          fieldsFloor.map(({ key, name, ...restField }) => (
+                            <Floor
+                              key={key}
+                              i={key}
+                              name={name}
+                              blockName={blockName}
+                              restField={restField}
+                              remove={remove}
+                              form={form}
+                            />
+                          ))}
+                      </>
+                    )}
+                  </Form.List>
+                )}
+              </div>
             </Space>
           ))}
         </>
       )}
     </Form.List>
-    // <div>
-    //   <Button type="primary" className={style.button} onClick={addBlock}>
-    //     Добавить блок
-    //   </Button>
-    //   <div>
-    //     {block.length > 0 &&
-    //       block.map((el: BlockType, blockIndex: number) => {
-    //         return (
-    //           <div
-    //             key={`sub${el.id + 1}`}
-    //             // icon={
-    //             //   <Popover content={() => popoverContent(blockIndex)}>
-    //             //     <MenuUnfoldOutlined />
-    //             //   </Popover>
-    //             // }
-    //             // title={}
-    //             className={style.subMenu}
-    //           >
-    //             {blockNumber(blockIndex)}
-    //             {!editMode[blockIndex] && (
-    //               <Button
-    //                 type="primary"
-    //                 className={style.button2}
-    //                 onClick={() => addFloors(blockIndex)}
-    //               >
-    //                 Добавить этаж
-    //               </Button>
-    //             )}
-    //             {block[blockIndex].floors?.map(
-    //               (el: FloorsType, floorIndex: number) => {
-    //                 return (
-    //                   <Floor
-    //                     key={floorIndex}
-    //                     el={el}
-    //                     blockIndex={blockIndex}
-    //                     floorIndex={floorIndex}
-    //                     block={block}
-    //                     setBlock={setBlock}
-    //                   />
-    //                 );
-    //               }
-    //             )}
-    //           </div>
-    //         );
-    //       })}
-    //   </div>
-    // </div>
   );
 };
 
