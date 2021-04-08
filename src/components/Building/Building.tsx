@@ -88,6 +88,7 @@ const Building = () => {
                   required: true,
                 },
               ]}
+              initialValue="Скороход Анастасия"
             >
               <Select style={{ width: 200 }}>
                 <Option value="Скороход Анастасия">Скороход Анастасия</Option>

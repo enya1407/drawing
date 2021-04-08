@@ -1,0 +1,12 @@
+.wrapper{
+    background-color: rgb(190 190 190);
+}
+.header{
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+.main{
+
+}

@@ -21,7 +21,6 @@ const Floor = ({ i, name, blockName, restField, remove, form }: PropType) => {
 
   const saveChangesHandler = (name: number) => {
     const data = form.getFieldValue(["blocks", blockName, "floors", name]);
-    console.log(data);
 
     form.validateFields([
       ["blocks", blockName, "floors", name, "floor"],
@@ -83,13 +82,13 @@ const Floor = ({ i, name, blockName, restField, remove, form }: PropType) => {
         rules={[
           { required: true, message: "Введите первоначальную стоимость" },
         ]}
-        type="number"
       >
         {!valueSaved ? (
           <Input
             placeholder="Введите первоначальную стоимость"
             required={true}
             className={style.input}
+            type="number"
           />
         ) : (
           <Input className={style.input} readOnly={true} bordered={false} />

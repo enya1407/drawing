@@ -9,3 +9,6 @@
     margin-right: 20px;
     display: inline-block;
 }
+.editing:hover{
+    cursor: pointer;
+}

@@ -5,10 +5,14 @@ import BlocksAndFloors from "./BlocksAndFloors/BlocksAndFloors";
 import Building from "./Building/Building";
 import style from "./CardBuilding.module.css";
 import { Button, Tabs, Form } from "antd";
+import { Link } from "react-router-dom";
 const { TabPane } = Tabs;
 
-const CardBuilding = () => {
-  const [activeTab, setActiveTab] = useState<string>("2");
+interface propType {
+  setData: any;
+}
+const CardBuilding = ({ setData }: propType) => {
+  const [activeTab, setActiveTab] = useState<string>("1");
   const [form] = Form.useForm();
 
   return (
@@ -54,10 +58,14 @@ const CardBuilding = () => {
             <Button type="primary" htmlType="submit" className={style.button}>
               Сохранить
             </Button>
-            <Button type="primary" htmlType="submit" className={style.button}>
-              Сохранить и выйти
-            </Button>
-            <Button className={style.button}>Отмена</Button>
+            <Link to="/">
+              <Button type="primary" htmlType="submit" className={style.button}>
+                Сохранить и выйти
+              </Button>
+            </Link>
+            <Link to="/">
+              <Button className={style.button}>Отмена</Button>
+            </Link>
           </div>
         </Form>
       </div>
