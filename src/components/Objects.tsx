@@ -70,9 +70,9 @@ interface dataType {
   name: string;
   address: string;
   owner: string;
-  occupiedAreas?: number;
-  freeAreas?: number;
-  occupancy?: number;
+  occupiedAreas?: number | null;
+  freeAreas?: number | null;
+  occupancy?: number | null;
 }
 interface propType {
   data: dataType[];

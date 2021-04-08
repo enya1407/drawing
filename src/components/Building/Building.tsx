@@ -18,13 +18,18 @@ import trashCan from "../../image/trashCan.svg";
 const { Option } = Select;
 
 const { Dragger } = Upload;
+interface propType {
+  data: any;
+  form: any;
+}
 
-const Building = () => {
+const Building = ({ data, form }: propType) => {
   const props = {
     name: "file",
     multiple: true,
     action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
   };
+
   const [pictureVisibility, setPictureVisibility] = useState<boolean>(true);
   const styleBuilding = pictureVisibility ? style.building : style.hidden;
   const styleTrashCan = pictureVisibility ? style.trashCan : style.hidden;
@@ -36,6 +41,7 @@ const Building = () => {
           className={style.item}
           label="Название"
           name="name"
+          initialValue={data[0] && data[0].name}
           rules={[
             {
               required: true,
@@ -43,7 +49,7 @@ const Building = () => {
             },
           ]}
         >
-          <Input />
+          <Input placeholder="Введите название обьекета" />
         </Form.Item>
         <Form.Item
           className={style.item}
@@ -56,6 +62,7 @@ const Building = () => {
           className={style.item}
           label="Адрес"
           name="address"
+          initialValue={data[0] && data[0].address}
           rules={[{ required: true, message: "Please input your username!" }]}
         >
           <Input placeholder="Город, улица, номер дома, корпус" />

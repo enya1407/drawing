@@ -11,13 +11,15 @@ interface dataType {
   name: string;
   address: string;
   owner: string;
-  occupiedAreas?: number;
-  freeAreas?: number;
-  occupancy?: number;
+  occupiedAreas?: number | null;
+  freeAreas?: number | null;
+  occupancy?: number | null;
 }
 
 const App = () => {
   const [data, setData] = useState<dataType[]>([]);
+
+  console.log("data", data);
 
   return (
     <BrowserRouter>
@@ -25,11 +27,11 @@ const App = () => {
         <Route path="/" exact component={() => <Objects data={data} />} />
         <Route
           path="/add-building"
-          component={() => <AddBuilding setData={setData} />}
+          component={() => <AddBuilding data={data} setData={setData} />}
         />
         <Route
           path="/card-building"
-          component={() => <CardBuilding setData={setData} />}
+          component={() => <CardBuilding data={data} setData={setData} />}
         />
       </Switch>
     </BrowserRouter>

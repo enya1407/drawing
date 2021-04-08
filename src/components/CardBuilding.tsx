@@ -9,17 +9,37 @@ import { Link } from "react-router-dom";
 const { TabPane } = Tabs;
 
 interface propType {
+  data: any;
   setData: any;
 }
-const CardBuilding = ({ setData }: propType) => {
+const CardBuilding = ({ data, setData }: propType) => {
   const [activeTab, setActiveTab] = useState<string>("1");
   const [form] = Form.useForm();
+
+  const saveAndExitButton = () => {
+    const name = form.getFieldValue(`name`);
+    const owner = form.getFieldValue(`owner`);
+    const address = form.getFieldValue(`address`);
+    const key = data.length > 0 ? data[data.lenght - 1]?.key + 1 : 0;
+    const newData = [
+      {
+        key: key,
+        name: name,
+        owner: owner,
+        address: address,
+        occupiedAreas: null,
+        freeAreas: null,
+        occupancy: null,
+      },
+    ];
+    setData(newData);
+  };
 
   return (
     <div className={style.wrapper}>
       <div className={style.tabsContainer}>
-        <h2>1001 Здание</h2>
-        <p>Минск, Ленина 35а</p>
+        <h2>{data[0] && data[0].name}</h2>
+        <p>{data[0] && data[0].address}</p>
 
         <Form
           form={form}
@@ -34,7 +54,7 @@ const CardBuilding = ({ setData }: propType) => {
             console.log("finish", info);
           }}
           onValuesChange={(changedValues, allValues) => {
-            console.log("values", allValues);
+            console.log("form", allValues);
           }}
         >
           <Tabs
@@ -42,7 +62,7 @@ const CardBuilding = ({ setData }: propType) => {
             onChange={(key: string) => setActiveTab(key)}
           >
             <TabPane tab="Здания" key="1">
-              <Building />
+              <Building data={data} form={form} />
             </TabPane>
             <TabPane tab="Блоки и этажи" key="2">
               <BlocksAndFloors form={form} />
@@ -59,7 +79,12 @@ const CardBuilding = ({ setData }: propType) => {
               Сохранить
             </Button>
             <Link to="/">
-              <Button type="primary" htmlType="submit" className={style.button}>
+              <Button
+                onClick={saveAndExitButton}
+                type="primary"
+                htmlType="submit"
+                className={style.button}
+              >
                 Сохранить и выйти
               </Button>
             </Link>
