@@ -1,18 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import style from "./Objects.module.css";
-import CardBuilding from "./CardBuilding";
-import { Button, Space, Table, Tag } from "antd";
+import { Button, Table } from "antd";
 import { MenuOutlined } from "@ant-design/icons";
+import {dataType} from "../type";
 
 const columns = [
   {
     width: 30,
-    render: () => (
-      <Link to="/card-building">
-        <MenuOutlined />
-      </Link>
-    ),
+    render: (record: any) => {
+      return (
+          <Link to={`/card-building/:${record.key}`}>
+            <MenuOutlined />
+          </Link>
+      );
+    },
   },
   {
     title: "Названия",
@@ -65,34 +67,25 @@ const spareData = [
     occupancy: 7,
   },
 ];
-interface dataType {
-  key: string;
-  name: string;
-  address: string;
-  owner: string;
-  occupiedAreas?: number | null;
-  freeAreas?: number | null;
-  occupancy?: number | null;
-}
+
 interface propType {
   data: dataType[];
 }
 
 const Objects = ({ data }: propType) => {
-  const draw = data.length > 0 ? data : spareData;
-  const footer = () => `Всего: ${draw.length}`;
+  const footer = () => `Всего: ${data.length}`;
   return (
-    <div className={style.wrapper}>
-      <div className={style.header}>
-        Обьекты
-        <Link to="/add-building">
-          <Button>Добавить</Button>
-        </Link>
+      <div className={style.wrapper}>
+        <div className={style.header}>
+          Обьекты
+          <Link to="/add-building">
+            <Button>Добавить</Button>
+          </Link>
+        </div>
+        <div className={style.main}>
+          <Table columns={columns} dataSource={data} footer={footer} />
+        </div>
       </div>
-      <div className={style.main}>
-        <Table columns={columns} dataSource={draw} footer={footer} />
-      </div>
-    </div>
   );
 };
 

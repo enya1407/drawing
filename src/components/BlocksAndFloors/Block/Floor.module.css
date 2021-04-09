@@ -7,8 +7,8 @@
 }
 
 .input{
-    width: 250px;
-    margin-left: 20px;
+    width: 150px;
+    text-align: end;
     display: inline-block;
 }
 .editing:hover{

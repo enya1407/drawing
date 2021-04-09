@@ -12,3 +12,8 @@
 .editing:hover{
     cursor: pointer;
 }
+
+.title:after{
+    color: red;
+    content: " *";
+}
