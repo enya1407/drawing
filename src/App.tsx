@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import "./App.css";
 import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
@@ -6,29 +6,55 @@ import Objects from "./components/Objects";
 import CardBuilding from "./components/CardBuilding";
 
 import AddBuilding from "./components/AddBuilding";
-import {dataType} from "./type";
-
+import { AllDataType, BasicDataType } from "./type";
 
 const App = () => {
-  const [data, setData] = useState<dataType[]>([]);
+  const [basicData, setBasicData] = useState<BasicDataType[]>([]);
+  const [allData, setAllData] = useState<AllDataType[]>([]);
 
-  console.log("data", data);
+  useEffect(() => {
+    const basicData = window.localStorage.getItem("basicData");
+    const allData = window.localStorage.getItem("allData");
+
+    if (basicData && allData) {
+      setBasicData(JSON.parse(basicData));
+      setAllData(JSON.parse(allData));
+    }
+  }, []);
 
   return (
-      <BrowserRouter>
-        <Switch>
-          <Route path="/" exact component={() => <Objects data={data} />} />
-          <Route
-              path="/add-building"
-              exact
-              component={() => <AddBuilding data={data} setData={setData} />}
-          />
-          <Route
-              path="/card-building"
-              component={() => <CardBuilding data={data} setData={setData} />}
-          />
-        </Switch>
-      </BrowserRouter>
+    <BrowserRouter>
+      <Switch>
+        <Route
+          path="/"
+          exact
+          component={() => <Objects basicData={basicData} />}
+        />
+        <Route
+          path="/add-building"
+          exact
+          component={() => (
+            <AddBuilding
+              basicData={basicData}
+              setBasicData={setBasicData}
+              allData={allData}
+              setAllData={setAllData}
+            />
+          )}
+        />
+        <Route
+          path="/card-building"
+          component={() => (
+            <CardBuilding
+              basicData={basicData}
+              setBasicData={setBasicData}
+              allData={allData}
+              setAllData={setAllData}
+            />
+          )}
+        />
+      </Switch>
+    </BrowserRouter>
   );
 };
 

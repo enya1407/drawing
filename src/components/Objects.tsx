@@ -3,16 +3,16 @@ import { Link } from "react-router-dom";
 import style from "./Objects.module.css";
 import { Button, Table } from "antd";
 import { MenuOutlined } from "@ant-design/icons";
-import {dataType} from "../type";
+import { BasicDataType } from "../type";
 
 const columns = [
   {
     width: 30,
     render: (record: any) => {
       return (
-          <Link to={`/card-building/:${record.key}`}>
-            <MenuOutlined />
-          </Link>
+        <Link to={`/card-building/:${record.key}`}>
+          <MenuOutlined />
+        </Link>
       );
     },
   },
@@ -42,6 +42,12 @@ const columns = [
     dataIndex: "freeAreas",
   },
   {
+    title: "Недоступные площади",
+    key: "inaccessibleAreas",
+    dataIndex: "inaccessibleAreas",
+  },
+
+  {
     title: "Заполняемость",
     key: "occupancy",
     dataIndex: "occupancy",
@@ -69,23 +75,23 @@ const spareData = [
 ];
 
 interface propType {
-  data: dataType[];
+  basicData: BasicDataType[];
 }
 
-const Objects = ({ data }: propType) => {
-  const footer = () => `Всего: ${data.length}`;
+const Objects = ({ basicData }: propType) => {
+  const footer = () => `Всего: ${basicData.length}`;
   return (
-      <div className={style.wrapper}>
-        <div className={style.header}>
-          Обьекты
-          <Link to="/add-building">
-            <Button>Добавить</Button>
-          </Link>
-        </div>
-        <div className={style.main}>
-          <Table columns={columns} dataSource={data} footer={footer} />
-        </div>
+    <div className={style.wrapper}>
+      <div className={style.header}>
+        Обьекты
+        <Link to="/add-building">
+          <Button>Добавить</Button>
+        </Link>
       </div>
+      <div className={style.main}>
+        <Table columns={columns} dataSource={basicData} footer={footer} />
+      </div>
+    </div>
   );
 };
 

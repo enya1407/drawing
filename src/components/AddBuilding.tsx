@@ -3,79 +3,88 @@ import { Button, Form } from "antd";
 import style from "./CardBuilding.module.css";
 import Building from "./Building/Building";
 import { Link } from "react-router-dom";
-import {SquareStatus} from "../type";
+import { AllDataType, BasicDataType } from "../type";
 
 interface propType {
-  data: any;
-  setData: any;
+  basicData: BasicDataType[];
+  setBasicData: any;
+  allData: AllDataType[];
+  setAllData: any;
 }
 
-const AddBuilding = ({ data, setData }: propType) => {
+const AddBuilding = ({
+  basicData,
+  setBasicData,
+  allData,
+  setAllData,
+}: propType) => {
   const [form] = Form.useForm();
-  const key = data.length > 0 ? data[data.length - 1]?.key + 1 : 0;
+  const key =
+    basicData.length > 0 ? basicData[basicData.length - 1]?.key + 1 : 0;
 
   const saveAndExitButton = () => {
-    const name = form.getFieldValue(`name`);
-    const owner = form.getFieldValue(`owner`);
-    const address = form.getFieldValue(`address`);
+    const data = form.getFieldsValue();
 
     const newData = [
-      ...data,
+      ...basicData,
       {
         key: key,
-        name: name,
-        owner: owner,
-        address: address,
-        occupiedAreas: null,
-        freeAreas: null,
-        occupancy: null,
-        squareStatus:SquareStatus.free
+        name: data.name,
+        owner: data.owner,
+        address: data.address,
+        occupiedAreas: 0,
+        freeAreas: 0,
+        inaccessibleAreas: 0,
+        occupancy: 0,
       },
     ];
-    setData(newData);
+    setBasicData(newData);
+
+    setAllData([...allData, data]);
+    window.localStorage.setItem("basicData", JSON.stringify(newData));
+    window.localStorage.setItem("allData", JSON.stringify([...allData, data]));
   };
 
   return (
-      <div className={style.wrapper}>
-        <h2>Добавление объекта</h2>
-        <Form
-            form={form}
-            name="formAdd"
-            onValuesChange={(changedValues, allValues) => {
-              console.log("formAdd", allValues);
-            }}
-        >
-          <Building data={data} form={form} id={null} />
-        </Form>
+    <div className={style.wrapper}>
+      <h2>Добавление объекта</h2>
+      <Form
+        form={form}
+        name="formAdd"
+        onValuesChange={(changedValues, allValues) => {
+          console.log("formAdd", allValues);
+        }}
+      >
+        <Building basicData={basicData} allData={allData} form={form} />
+      </Form>
 
-        <div className={`style.buttonWrapper`}>
-          <Link to={`/card-building/:${key}`}>
-            <Button
-                type="primary"
-                htmlType="submit"
-                className={style.button}
-                onClick={saveAndExitButton}
-            >
-              Сохранить
-            </Button>
-          </Link>
-          <Link to="/">
-            <Button
-                onClick={saveAndExitButton}
-                type="primary"
-                htmlType="submit"
-                className={style.button}
-            >
-              Сохранить и выйти
-            </Button>
-          </Link>
-          <Link to="/">
-            <Button className={style.button}>Отмена</Button>
-          </Link>
-        </div>
+      <div className={`style.buttonWrapper`}>
+        <Link to={`/card-building/:${key}`}>
+          <Button
+            type="primary"
+            htmlType="submit"
+            className={style.button}
+            onClick={saveAndExitButton}
+          >
+            Сохранить
+          </Button>
+        </Link>
+        <Link to="/">
+          <Button
+            onClick={saveAndExitButton}
+            type="primary"
+            htmlType="submit"
+            className={style.button}
+          >
+            Сохранить и выйти
+          </Button>
+        </Link>
+        <Link to="/">
+          <Button className={style.button}>Отмена</Button>
+        </Link>
       </div>
+    </div>
   );
 };
 
 export default AddBuilding;
-
