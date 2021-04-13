@@ -42,70 +42,63 @@ const FieldSquares = ({
   const owner = form.getFieldValue(`owner`);
 
   const saveChangesHandler = (name: number) => {
-    const data = form.getFieldValue([`squares`, blockIndex, floorIndex, name]);
-    form.validateFields([
-      [`squares`, blockIndex, floorIndex, name, `squareName`],
-      [`squares`, blockIndex, floorIndex, name, `typeOfPremises`],
-      [`squares`, blockIndex, floorIndex, name, `areaSize`],
-      [`squares`, blockIndex, floorIndex, name, `owner`],
-      [`squares`, blockIndex, floorIndex, name, `initialCost`],
-    ]);
+    form
+      .validateFields([
+        [`squares`, blockIndex, floorIndex, name, `squareName`],
+        [`squares`, blockIndex, floorIndex, name, `typeOfPremises`],
+        [`squares`, blockIndex, floorIndex, name, `areaSize`],
+        [`squares`, blockIndex, floorIndex, name, `owner`],
+        [`squares`, blockIndex, floorIndex, name, `initialCost`],
+      ])
+      .then(() => {
+        setValueSaved(true);
 
-    if (
-      data?.squareName?.trim().length > 0 &&
-      data?.typeOfPremises?.trim().length > 0 &&
-      data?.areaSize?.trim().length > 0 &&
-      data?.owner?.trim().length > 0 &&
-      data?.initialCost?.trim().length > 0
-    ) {
-      setValueSaved(true);
+        const auxiliaryArea = form.getFieldValue([
+          `squares`,
+          blockIndex,
+          floorIndex,
+          name,
+          `auxiliaryArea`,
+        ]);
+        //добавляем статус в первый раз
+        if (status === null && auxiliaryArea !== status) {
+          if (auxiliaryArea) {
+            const newSquareStatus = {
+              ...squareStatus,
+              inaccessibleAreas: squareStatus.inaccessibleAreas + 1,
+            };
 
-      const auxiliaryArea = form.getFieldValue([
-        `squares`,
-        blockIndex,
-        floorIndex,
-        name,
-        `auxiliaryArea`,
-      ]);
-      //добавляем статус в первый раз
-      if (status === null && auxiliaryArea !== status) {
-        if (auxiliaryArea) {
-          const newSquareStatus = {
-            ...squareStatus,
-            inaccessibleAreas: squareStatus.inaccessibleAreas + 1,
-          };
+            setSquareStatus(newSquareStatus);
+          } else {
+            const newSquareStatus = {
+              ...squareStatus,
+              freeAreas: squareStatus.freeAreas + 1,
+            };
 
-          setSquareStatus(newSquareStatus);
-        } else {
-          const newSquareStatus = {
-            ...squareStatus,
-            freeAreas: squareStatus.freeAreas + 1,
-          };
-
-          setSquareStatus(newSquareStatus);
+            setSquareStatus(newSquareStatus);
+          }
+          setStatus(auxiliaryArea);
         }
-        setStatus(auxiliaryArea);
-      }
-      //меняем статус
-      if (status !== null && auxiliaryArea !== status) {
-        if (auxiliaryArea) {
-          const newSquareStatus = {
-            ...squareStatus,
-            inaccessibleAreas: squareStatus.inaccessibleAreas + 1,
-            freeAreas: squareStatus.freeAreas - 1,
-          };
-          setSquareStatus(newSquareStatus);
-        } else {
-          const newSquareStatus = {
-            ...squareStatus,
-            freeAreas: squareStatus.freeAreas + 1,
-            inaccessibleAreas: squareStatus.inaccessibleAreas - 1,
-          };
-          setSquareStatus(newSquareStatus);
+        //меняем статус
+        if (status !== null && auxiliaryArea !== status) {
+          if (auxiliaryArea) {
+            const newSquareStatus = {
+              ...squareStatus,
+              inaccessibleAreas: squareStatus.inaccessibleAreas + 1,
+              freeAreas: squareStatus.freeAreas - 1,
+            };
+            setSquareStatus(newSquareStatus);
+          } else {
+            const newSquareStatus = {
+              ...squareStatus,
+              freeAreas: squareStatus.freeAreas + 1,
+              inaccessibleAreas: squareStatus.inaccessibleAreas - 1,
+            };
+            setSquareStatus(newSquareStatus);
+          }
+          setStatus(auxiliaryArea);
         }
-        setStatus(auxiliaryArea);
-      }
-    }
+      });
   };
 
   const popoverContent = (name: any, remove: any) => {

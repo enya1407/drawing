@@ -6,10 +6,9 @@ import Objects from "./components/Objects";
 import CardBuilding from "./components/CardBuilding";
 
 import AddBuilding from "./components/AddBuilding";
-import { AllDataType, BasicDataType } from "./type";
+import { AllDataType } from "./type";
 
 const App = () => {
-  const [basicData, setBasicData] = useState<BasicDataType[]>([]);
   const [allData, setAllData] = useState<AllDataType[]>([]);
 
   useEffect(() => {
@@ -17,7 +16,6 @@ const App = () => {
     const allData = window.localStorage.getItem("allData");
 
     if (basicData && allData) {
-      setBasicData(JSON.parse(basicData));
       setAllData(JSON.parse(allData));
     }
   }, []);
@@ -28,29 +26,21 @@ const App = () => {
         <Route
           path="/"
           exact
-          component={() => <Objects basicData={basicData} />}
+          component={() => (
+            <Objects allData={allData} setAllData={setAllData} />
+          )}
         />
         <Route
           path="/add-building"
           exact
           component={() => (
-            <AddBuilding
-              basicData={basicData}
-              setBasicData={setBasicData}
-              allData={allData}
-              setAllData={setAllData}
-            />
+            <AddBuilding allData={allData} setAllData={setAllData} />
           )}
         />
         <Route
           path="/card-building"
           component={() => (
-            <CardBuilding
-              basicData={basicData}
-              setBasicData={setBasicData}
-              allData={allData}
-              setAllData={setAllData}
-            />
+            <CardBuilding allData={allData} setAllData={setAllData} />
           )}
         />
       </Switch>

@@ -1,32 +1,23 @@
 import React, { useState } from "react";
 import style from "./Building.module.css";
-import {
-  DatePicker,
-  Form,
-  Input,
-  Select,
-  Upload,
-  message,
-  Button,
-  Popover,
-} from "antd";
+import { DatePicker, Form, Input, Select, Upload, Popover } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
 import TextArea from "antd/es/input/TextArea";
 import building from "../../image/building.jpg";
 import trashCan from "../../image/trashCan.svg";
-import { AllDataType, BasicDataType } from "../../type";
+import { AllDataType } from "../../type";
 
 const { Option } = Select;
 
 const { Dragger } = Upload;
 interface propType {
-  basicData: BasicDataType[];
+  currentData?: AllDataType | null;
   allData: AllDataType[];
   form: any;
   id?: number;
 }
 
-const Building = ({ basicData, allData, form, id }: propType) => {
+const Building = ({ currentData, allData, form, id }: propType) => {
   const props = {
     name: "file",
     multiple: true,
@@ -36,7 +27,7 @@ const Building = ({ basicData, allData, form, id }: propType) => {
   const [pictureVisibility, setPictureVisibility] = useState<boolean>(true);
   const styleBuilding = pictureVisibility ? style.building : style.hidden;
   const styleTrashCan = pictureVisibility ? style.trashCan : style.hidden;
-  console.log(id);
+
   return (
     <div className={style.wrapper}>
       <section className={style.section}>
@@ -45,7 +36,6 @@ const Building = ({ basicData, allData, form, id }: propType) => {
           className={style.item}
           label="Название"
           name="name"
-          initialValue={id === undefined ? "" : allData[Number(id)].name}
           rules={[
             {
               required: true,
@@ -59,9 +49,6 @@ const Building = ({ basicData, allData, form, id }: propType) => {
           className={style.item}
           label="Номер обьекта"
           name="objectNumber"
-          initialValue={
-            id === undefined ? "" : allData[Number(id)].objectNumber
-          }
         >
           <Input placeholder="Введите номер обьекта" />
         </Form.Item>
@@ -69,7 +56,6 @@ const Building = ({ basicData, allData, form, id }: propType) => {
           className={style.item}
           label="Адрес"
           name="address"
-          initialValue={id === undefined ? "" : allData[Number(id)].address}
           rules={[{ required: true, message: "Не может быть пустым" }]}
         >
           <Input placeholder="Город, улица, номер дома, корпус" />
@@ -79,14 +65,7 @@ const Building = ({ basicData, allData, form, id }: propType) => {
         <p className={style.heading}>Характеристики</p>
         <div className={style.characteristicsWrapper}>
           <div>
-            <Form.Item
-              className={`${style.item}`}
-              label="Класс"
-              name="class"
-              initialValue={
-                allData[Number(id)]?.class && allData[Number(id)].class
-              }
-            >
+            <Form.Item className={`${style.item}`} label="Класс" name="class">
               <Select defaultValue="Не присвоен" style={{ width: 200 }}>
                 <Option value="А+">А+</Option>
                 <Option value="A">A</Option>
@@ -101,9 +80,6 @@ const Building = ({ basicData, allData, form, id }: propType) => {
               className={style.item}
               label="Исполнение"
               name="execution"
-              initialValue={
-                allData[Number(id)]?.execution && allData[Number(id)].execution
-              }
             >
               <Select defaultValue="Не указано" style={{ width: 200 }}>
                 <Option value="дерево">Дерево</Option>
@@ -132,9 +108,6 @@ const Building = ({ basicData, allData, form, id }: propType) => {
               className={style.item}
               label="Полная площадь"
               name="fullArea"
-              initialValue={
-                allData[Number(id)]?.fullArea && allData[Number(id)].fullArea
-              }
             >
               <Input type="number" style={{ width: 100 }} />
             </Form.Item>
@@ -142,10 +115,6 @@ const Building = ({ basicData, allData, form, id }: propType) => {
               className={style.item}
               label="Арендопригодная площадь"
               name="rentableArea"
-              initialValue={
-                allData[Number(id)]?.rentableArea &&
-                allData[Number(id)].rentableArea
-              }
             >
               <Input type="number" style={{ width: 100 }} />
             </Form.Item>
@@ -153,10 +122,6 @@ const Building = ({ basicData, allData, form, id }: propType) => {
               className={style.item}
               label="Этажность"
               name="numberOfStoreys"
-              initialValue={
-                allData[Number(id)]?.numberOfStoreys &&
-                allData[Number(id)].numberOfStoreys
-              }
             >
               <Input style={{ width: 100 }} />
             </Form.Item>
@@ -164,10 +129,6 @@ const Building = ({ basicData, allData, form, id }: propType) => {
               className={style.item}
               label="Ввод в эксплуатацию"
               name="commissioning"
-              initialValue={
-                allData[Number(id)]?.commissioning &&
-                allData[Number(id)].commissioning
-              }
             >
               <DatePicker placeholder="Выберите дату" />
             </Form.Item>
@@ -198,10 +159,7 @@ const Building = ({ basicData, allData, form, id }: propType) => {
       <section className={style.section}>
         {" "}
         <p className={style.heading}>Комментарий</p>
-        <Form.Item
-          name="comment"
-          initialValue={id === undefined ? "" : allData[Number(id)].comment}
-        >
+        <Form.Item name="comment">
           <TextArea autoSize={{ minRows: 2, maxRows: 6 }} />
         </Form.Item>
       </section>

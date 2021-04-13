@@ -6,25 +6,17 @@ import BlocksAndFloors from "./BlocksAndFloors/BlocksAndFloors";
 import Building from "./Building/Building";
 import style from "./CardBuilding.module.css";
 import { Button, Tabs, Form } from "antd";
-import { Link, useLocation } from "react-router-dom";
-import { AllDataType, BasicDataType, squareStatusType } from "../type";
-import { log } from "util";
+import { Link, useLocation, useHistory } from "react-router-dom";
+import { AllDataType, squareStatusType } from "../type";
 
 const { TabPane } = Tabs;
 
 interface propType {
-  basicData: BasicDataType[];
-  setBasicData: any;
   allData: AllDataType[];
   setAllData: any;
 }
 
-const CardBuilding = ({
-  basicData,
-  setBasicData,
-  allData,
-  setAllData,
-}: propType) => {
+const CardBuilding = ({ allData, setAllData }: propType) => {
   const location = useLocation();
   const id = location.pathname.slice(16);
 
@@ -34,42 +26,57 @@ const CardBuilding = ({
     freeAreas: 0,
     inaccessibleAreas: 0,
   });
+  const [currentData, setCurrentData] = useState<any | null>(null);
   const [form] = Form.useForm();
-  console.log("allData", allData);
+  let history = useHistory();
+
   useEffect(() => {
-    form.setFieldsValue((allData: AllDataType[]) => allData[Number(id)]);
+    allData.forEach((el) => {
+      if (el.key === Number(id)) {
+        const { key, squareStatus, occupancy, ...formData } = el;
+        setCurrentData(formData);
+        form.setFieldsValue(formData);
+      }
+    });
   }, []);
 
-  const saveAndExitButton = () => {
+  const saveAndExitButton = (route: string) => {
     const data = form.getFieldsValue();
+    const totalArea =
+      squareStatus.occupiedAreas +
+      squareStatus.inaccessibleAreas +
+      squareStatus.freeAreas;
+    const totalOccupiedArea =
+      squareStatus.occupiedAreas + squareStatus.inaccessibleAreas;
+    const occupancy =
+      totalArea && ((totalOccupiedArea * 100) / totalArea).toFixed(2);
 
-    const newDataArr = [...basicData];
-    const newData = {
-      ...basicData[Number(id)],
-      name: data.name,
-      owner: data.owner,
-      address: data.address,
-      occupiedAreas: squareStatus.occupiedAreas,
-      freeAreas: squareStatus.freeAreas,
-      inaccessibleAreas: squareStatus.inaccessibleAreas,
-      occupancy: 0,
-    };
-    newDataArr[Number(id)] = newData;
-    setBasicData(newDataArr);
+    form.validateFields([[`name`], [`address`], [`owner`]]).then(() => {
+      const newDataArr = [...allData];
+      newDataArr.filter((el, i) => {
+        if (el.key === Number(id)) {
+          newDataArr[i] = {
+            key: Number(id),
+            squareStatus: squareStatus,
+            occupancy: `${occupancy} %`,
+            ...data,
+          };
+          console.log("data", data, newDataArr);
+        }
+      });
 
-    const newAllArr = [...allData];
-    newAllArr[Number(id)] = data;
+      setAllData(newDataArr);
+      window.localStorage.setItem("allData", JSON.stringify(newDataArr));
 
-    setAllData(newAllArr);
-    window.localStorage.setItem("basicData", JSON.stringify(newDataArr));
-    window.localStorage.setItem("allData", JSON.stringify(newAllArr));
+      route && history.push(route);
+    });
   };
 
   return (
     <div className={style.wrapper}>
       <div className={style.tabsContainer}>
-        <h2>{basicData[Number(id)] && basicData[Number(id)].name}</h2>
-        <p>{basicData[Number(id)] && basicData[Number(id)].address}</p>
+        <h2>{currentData && currentData.name}</h2>
+        <p>{currentData && currentData.address}</p>
 
         <Form
           form={form}
@@ -93,7 +100,7 @@ const CardBuilding = ({
           >
             <TabPane tab="Здания" key="1">
               <Building
-                basicData={basicData}
+                currentData={currentData}
                 allData={allData}
                 form={form}
                 id={Number(id)}
@@ -117,20 +124,19 @@ const CardBuilding = ({
             <Button
               type="primary"
               className={style.button}
-              onClick={saveAndExitButton}
+              onClick={() => saveAndExitButton("")}
             >
               Сохранить
             </Button>
-            <Link to="/">
-              <Button
-                onClick={saveAndExitButton}
-                htmlType={"submit"}
-                type="primary"
-                className={style.button}
-              >
-                Сохранить и выйти
-              </Button>
-            </Link>
+
+            <Button
+              onClick={() => saveAndExitButton("/")}
+              htmlType={"submit"}
+              type="primary"
+              className={style.button}
+            >
+              Сохранить и выйти
+            </Button>
             <Link to="/">
               <Button className={style.button}>Отмена</Button>
             </Link>
