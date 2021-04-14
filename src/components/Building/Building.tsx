@@ -11,13 +11,10 @@ const { Option } = Select;
 
 const { Dragger } = Upload;
 interface propType {
-  currentData?: AllDataType | null;
-  allData: AllDataType[];
-  form: any;
-  id?: number;
+  setIsBlocking: any;
 }
 
-const Building = ({ currentData, allData, form, id }: propType) => {
+const Building = ({ setIsBlocking }: propType) => {
   const props = {
     name: "file",
     multiple: true,

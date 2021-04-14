@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import { Button, Form } from "antd";
+import { Button, Form, Modal } from "antd";
 import style from "./CardBuilding.module.css";
 import Building from "./Building/Building";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useHistory, Prompt } from "react-router-dom";
 import { AllDataType } from "../type";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
+import { useBeforeunload } from "react-beforeunload";
 
 interface propType {
   allData: AllDataType[];
@@ -11,8 +13,15 @@ interface propType {
 }
 
 const AddBuilding = ({ allData, setAllData }: propType) => {
+  useBeforeunload(() =>
+    isBlocking ? `Вы потеряете внесенные изменения, продолжить?` : false
+  );
+
   const [form] = Form.useForm();
-  let history = useHistory();
+  const history = useHistory();
+
+  const [isBlocking, setIsBlocking] = useState(false);
+
   const key = allData.length > 0 ? allData[allData.length - 1]?.key + 1 : 0;
 
   const saveAndExitButton = (route: string) => {
@@ -49,6 +58,7 @@ const AddBuilding = ({ allData, setAllData }: propType) => {
         ])
       );
       history.push(route);
+      setIsBlocking(false);
     });
   };
 
@@ -60,9 +70,14 @@ const AddBuilding = ({ allData, setAllData }: propType) => {
         name="formAdd"
         onValuesChange={(changedValues, allValues) => {
           console.log("formAdd", allValues);
+          setIsBlocking(true);
         }}
       >
-        <Building allData={allData} form={form} />
+        <Prompt
+          when={isBlocking}
+          message={() => `Вы потеряете внесенные изменения, продолжить?`}
+        />
+        <Building setIsBlocking={setIsBlocking} />
       </Form>
 
       <div className={`style.buttonWrapper`}>

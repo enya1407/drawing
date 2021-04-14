@@ -5,9 +5,11 @@ import Squares from "./Squares/Squares";
 import BlocksAndFloors from "./BlocksAndFloors/BlocksAndFloors";
 import Building from "./Building/Building";
 import style from "./CardBuilding.module.css";
-import { Button, Tabs, Form } from "antd";
-import { Link, useLocation, useHistory } from "react-router-dom";
+import { Button, Tabs, Form, Modal } from "antd";
+import { Link, useLocation, useHistory, Prompt } from "react-router-dom";
 import { AllDataType, squareStatusType } from "../type";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
+import { useBeforeunload } from "react-beforeunload";
 
 const { TabPane } = Tabs;
 
@@ -17,6 +19,9 @@ interface propType {
 }
 
 const CardBuilding = ({ allData, setAllData }: propType) => {
+  useBeforeunload(() =>
+    isBlocking ? `Вы потеряете внесенные изменения, продолжить?` : false
+  );
   const location = useLocation();
   const id = location.pathname.slice(16);
 
@@ -27,11 +32,13 @@ const CardBuilding = ({ allData, setAllData }: propType) => {
     inaccessibleAreas: 0,
   });
   const [currentData, setCurrentData] = useState<any | null>(null);
+  const [isBlocking, setIsBlocking] = useState(false);
   const [form] = Form.useForm();
   let history = useHistory();
 
   useEffect(() => {
     allData.forEach((el) => {
+      console.log("el", el.key, Number(id));
       if (el.key === Number(id)) {
         const { key, squareStatus, occupancy, ...formData } = el;
         setCurrentData(formData);
@@ -69,6 +76,7 @@ const CardBuilding = ({ allData, setAllData }: propType) => {
       window.localStorage.setItem("allData", JSON.stringify(newDataArr));
 
       route && history.push(route);
+      setIsBlocking(false);
     });
   };
 
@@ -92,19 +100,19 @@ const CardBuilding = ({ allData, setAllData }: propType) => {
           }}
           onValuesChange={(changedValues, allValues) => {
             console.log("form", allValues);
+            setIsBlocking(true);
           }}
         >
+          <Prompt
+            when={isBlocking}
+            message={() => `Вы потеряете внесенные изменения, продолжить?`}
+          />
           <Tabs
             activeKey={activeTab}
             onChange={(key: string) => setActiveTab(key)}
           >
             <TabPane tab="Здания" key="1">
-              <Building
-                currentData={currentData}
-                allData={allData}
-                form={form}
-                id={Number(id)}
-              />
+              <Building setIsBlocking={setIsBlocking} />
             </TabPane>
             <TabPane tab="Блоки и этажи" key="2">
               <BlocksAndFloors form={form} />

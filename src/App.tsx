@@ -12,10 +12,9 @@ const App = () => {
   const [allData, setAllData] = useState<AllDataType[]>([]);
 
   useEffect(() => {
-    const basicData = window.localStorage.getItem("basicData");
     const allData = window.localStorage.getItem("allData");
 
-    if (basicData && allData) {
+    if (allData) {
       setAllData(JSON.parse(allData));
     }
   }, []);
