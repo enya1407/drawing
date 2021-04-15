@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Input, Menu, Popover, Form, Space } from "antd";
 import {
   MenuUnfoldOutlined,
@@ -14,11 +14,25 @@ interface PropType {
   restField: any;
   remove: any;
   form: any;
+  currentData: any;
 }
 
-const Floor = ({ i, name, blockName, restField, remove, form }: PropType) => {
+const Floor = ({
+  i,
+  name,
+  blockName,
+  restField,
+  remove,
+  form,
+  currentData,
+}: PropType) => {
   const [valueSaved, setValueSaved] = useState<boolean>(false);
+  const defaultValue =
+    currentData?.blocks && currentData?.blocks[blockName]?.floors[name];
 
+  useEffect(() => {
+    defaultValue && setValueSaved(true);
+  }, []);
   const saveChangesHandler = (name: number) => {
     form
       .validateFields([
@@ -74,10 +88,14 @@ const Floor = ({ i, name, blockName, restField, remove, form }: PropType) => {
           <Input className={style.input} readOnly={true} bordered={false} />
         )}
       </Form.Item>
-      <Form.Item {...restField} name={[name, `cost`]}>
+      <Form.Item
+        {...restField}
+        name={[name, `cost`]}
+        rules={[{ required: true, message: "Введите первонач. стоимость" }]}
+      >
         {!valueSaved ? (
           <Input
-            placeholder="Введите первоначальную стоимость"
+            placeholder="Введите первонач. стоимость"
             className={style.input}
             type="number"
           />

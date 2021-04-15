@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Shape, Transformer } from "react-konva";
-import style from "./FloorPlans.module.css";
+import style from "./AddingAreas.module.css";
 
 type ElementType = {
   start: boolean;

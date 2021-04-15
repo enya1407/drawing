@@ -14,10 +14,15 @@ export interface AllDataType {
   objectNumber: any;
   owner: any;
   rentableArea: any;
+  valueEnteredBlock: BlockType;
 }
 
 export interface squareStatusType {
   occupiedAreas: number;
   freeAreas: number;
   inaccessibleAreas: number;
+}
+export interface BlockType {
+  savedField: number[];
+  floorsVisible: number[];
 }

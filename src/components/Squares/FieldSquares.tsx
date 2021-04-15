@@ -15,6 +15,7 @@ import { MenuUnfoldOutlined } from "@ant-design/icons";
 import { squareStatusType } from "../../type";
 const { Option } = Select;
 interface PropType {
+  currentData: any;
   name: any;
   restField: any;
   remove: any;
@@ -27,6 +28,7 @@ interface PropType {
 }
 
 const FieldSquares = ({
+  currentData,
   name,
   restField,
   remove,
@@ -40,6 +42,16 @@ const FieldSquares = ({
   const [valueSaved, setValueSaved] = useState<boolean>(false);
   const [status, setStatus] = useState<boolean | null>(null);
   const owner = form.getFieldValue(`owner`);
+
+  const defaultValue =
+    currentData?.squares &&
+    currentData?.squares[blockIndex] &&
+    currentData?.squares[blockIndex][floorIndex] &&
+    currentData?.squares[blockIndex][floorIndex][name];
+
+  useEffect(() => {
+    defaultValue && setValueSaved(true);
+  }, []);
 
   const saveChangesHandler = (name: number) => {
     form
@@ -60,33 +72,35 @@ const FieldSquares = ({
           name,
           `auxiliaryArea`,
         ]);
+
         //добавляем статус в первый раз
-        if (status === null && auxiliaryArea !== status) {
+
+        if (status === null && auxiliaryArea !== status && !defaultValue) {
           if (auxiliaryArea) {
             const newSquareStatus = {
               ...squareStatus,
               inaccessibleAreas: squareStatus.inaccessibleAreas + 1,
             };
-
+            setStatus(true);
             setSquareStatus(newSquareStatus);
           } else {
             const newSquareStatus = {
               ...squareStatus,
               freeAreas: squareStatus.freeAreas + 1,
             };
-
+            setStatus(false);
             setSquareStatus(newSquareStatus);
           }
-          setStatus(auxiliaryArea);
         }
         //меняем статус
-        if (status !== null && auxiliaryArea !== status) {
+        else if (status !== null && auxiliaryArea !== status) {
           if (auxiliaryArea) {
             const newSquareStatus = {
               ...squareStatus,
               inaccessibleAreas: squareStatus.inaccessibleAreas + 1,
               freeAreas: squareStatus.freeAreas - 1,
             };
+            setStatus(true);
             setSquareStatus(newSquareStatus);
           } else {
             const newSquareStatus = {
@@ -94,9 +108,9 @@ const FieldSquares = ({
               freeAreas: squareStatus.freeAreas + 1,
               inaccessibleAreas: squareStatus.inaccessibleAreas - 1,
             };
+            setStatus(false);
             setSquareStatus(newSquareStatus);
           }
-          setStatus(auxiliaryArea);
         }
       });
   };
@@ -200,22 +214,17 @@ const FieldSquares = ({
         </Form.Item>
       </Col>
       <Col span={4}>
-        <Form.Item
-          {...restField}
-          name={[name, "auxiliaryArea"]}
-          // label={"Вспомогательная площадь"}
-          initialValue={false}
-        >
-          <Switch disabled={valueSaved} />
+        <Form.Item {...restField} name={[name, "auxiliaryArea"]}>
+          <Switch
+            disabled={valueSaved}
+            defaultChecked={defaultValue?.auxiliaryArea ? true : false}
+          />
         </Form.Item>
       </Col>
       <Col span={4}>
         <Form.Item
           {...restField}
           name={[name, "initialCost"]}
-          rules={[
-            { required: true, message: "Введите первоначальную стоимость" },
-          ]}
           initialValue={floor.cost}
         >
           {!valueSaved ? (

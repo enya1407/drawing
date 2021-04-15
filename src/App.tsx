@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import "./App.css";
 import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
@@ -13,10 +13,7 @@ const App = () => {
 
   useEffect(() => {
     const allData = window.localStorage.getItem("allData");
-
-    if (allData) {
-      setAllData(JSON.parse(allData));
-    }
+    allData && setAllData(JSON.parse(allData));
   }, []);
 
   return (

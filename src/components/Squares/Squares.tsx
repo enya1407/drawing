@@ -4,15 +4,17 @@ import { DownOutlined, PlusOutlined, UpOutlined } from "@ant-design/icons";
 import style from "./Squares.module.css";
 import FieldSquares from "./FieldSquares";
 import { FormListFieldData } from "antd/lib/form/FormList";
-import { squareStatusType } from "../../type";
+import { AllDataType, squareStatusType } from "../../type";
 
 interface PropType {
   form: any;
+  currentData: any;
   squareStatus: squareStatusType;
   setSquareStatus: any;
 }
 interface SquarePropType {
   form: any;
+  currentData: any;
   blockIndex: any;
   floorIndex: any;
   fields: FormListFieldData[];
@@ -24,7 +26,12 @@ interface SquarePropType {
   setSquareStatus: any;
 }
 
-const Squares = ({ form, squareStatus, setSquareStatus }: PropType) => {
+const Squares = ({
+  form,
+  currentData,
+  squareStatus,
+  setSquareStatus,
+}: PropType) => {
   const blocksAndFloors = form.getFieldValue(`blocks`);
 
   return (
@@ -39,6 +46,7 @@ const Squares = ({ form, squareStatus, setSquareStatus }: PropType) => {
                     {(fields, { add, remove }) => (
                       <Square
                         form={form}
+                        currentData={currentData}
                         blockIndex={blockIndex}
                         floorIndex={floorIndex}
                         fields={fields}
@@ -61,6 +69,7 @@ const Squares = ({ form, squareStatus, setSquareStatus }: PropType) => {
 
 const Square = ({
   form,
+  currentData,
   blockIndex,
   floorIndex,
   fields,
@@ -104,7 +113,7 @@ const Square = ({
           </Button>
         </Form.Item>
       </Row>
-      {visible && (
+      {visible && fields.length > 0 && (
         <>
           <Row style={{ marginBottom: 35 }}>
             <Col span={1}></Col>
@@ -120,16 +129,13 @@ const Square = ({
             <Col span={3} className={style.title}>
               Собственник
             </Col>
-            <Col span={4} className={style.title}>
-              Вспомогательная площадь
-            </Col>
-            <Col span={4} className={style.title}>
-              Первоначальная стоимость
-            </Col>
+            <Col span={4}>Вспомогательная площадь</Col>
+            <Col span={4}>Первоначальная стоимость</Col>
             <Col span={3}></Col>
           </Row>
           {fields.map(({ key, name, fieldKey, ...restField }) => (
             <FieldSquares
+              currentData={currentData}
               key={key}
               name={name}
               restField={restField}

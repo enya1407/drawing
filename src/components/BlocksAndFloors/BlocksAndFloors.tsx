@@ -16,12 +16,16 @@ interface BlockType {
 }
 interface PropType {
   form: any;
+  currentData: any;
+  valueEnteredBlock: BlockType;
+  setValueEnteredBlock: any;
 }
-const BlocksAndFloors = ({ form }: PropType) => {
-  const [valueEnteredBlock, setValueEnteredBlock] = useState<BlockType>({
-    savedField: [],
-    floorsVisible: [],
-  });
+const BlocksAndFloors = ({
+  form,
+  currentData,
+  valueEnteredBlock,
+  setValueEnteredBlock,
+}: PropType) => {
   // useEffect(() => {
   //   const data = form.getFieldsValue([`blocks`, name, `block`]);
   // }, []);
@@ -166,7 +170,7 @@ const BlocksAndFloors = ({ form }: PropType) => {
                   justifyContent: "space-around",
                 }}
               >
-                {valueEnteredBlock.floorsVisible.includes(blockName) ? (
+                {valueEnteredBlock?.floorsVisible.includes(blockName) ? (
                   <UpOutlined
                     onClick={() => outlinedHandler(blockName)}
                     style={{
@@ -202,7 +206,7 @@ const BlocksAndFloors = ({ form }: PropType) => {
                   name={[blockName, `block`]}
                   rules={[{ required: true, message: "Введите номер блока" }]}
                 >
-                  {!valueEnteredBlock.savedField.includes(blockName) ? (
+                  {!valueEnteredBlock?.savedField.includes(blockName) ? (
                     <Input
                       placeholder="Введите номер блока"
                       required={true}
@@ -216,7 +220,7 @@ const BlocksAndFloors = ({ form }: PropType) => {
                     />
                   )}
                 </Form.Item>
-                {!valueEnteredBlock.savedField.includes(blockName) && (
+                {!valueEnteredBlock?.savedField.includes(blockName) && (
                   <Button
                     type="primary"
                     className={style.button}
@@ -227,7 +231,7 @@ const BlocksAndFloors = ({ form }: PropType) => {
                 )}
               </div>
               <div className={style.formListFloor}>
-                {valueEnteredBlock.savedField.includes(blockName) && (
+                {valueEnteredBlock?.savedField.includes(blockName) && (
                   <Form.List name={[blockName, `floors`]}>
                     {(fieldsFloor, { add, remove }) => (
                       <>
@@ -240,7 +244,7 @@ const BlocksAndFloors = ({ form }: PropType) => {
                             Добавить этаж
                           </Button>
                         </Form.Item>
-                        {valueEnteredBlock.floorsVisible.includes(blockName) &&
+                        {valueEnteredBlock?.floorsVisible.includes(blockName) &&
                           fieldsFloor.map(({ key, name, ...restField }) => (
                             <Floor
                               key={key}
@@ -250,6 +254,7 @@ const BlocksAndFloors = ({ form }: PropType) => {
                               restField={restField}
                               remove={remove}
                               form={form}
+                              currentData={currentData}
                             />
                           ))}
                       </>

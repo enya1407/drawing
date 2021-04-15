@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useHistory } from "react-router-dom";
 import style from "./Objects.module.css";
 import { Button, Modal, Popover, Table } from "antd";
@@ -11,6 +11,9 @@ interface propType {
 }
 
 const Objects = ({ allData, setAllData }: propType) => {
+  useEffect(() => {
+    window.localStorage.removeItem("activeTab");
+  }, []);
   let history = useHistory();
   const viewButtonHandler = (key: any) => {};
   const changeButtonHandler = (key: any) =>
@@ -96,7 +99,7 @@ const Objects = ({ allData, setAllData }: propType) => {
   ];
 
   const footer = () => `Всего: ${allData.length}`;
-  console.log(allData);
+
   return (
     <div className={style.wrapper}>
       <div className={style.header}>

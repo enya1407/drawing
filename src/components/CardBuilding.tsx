@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
-import FloorPlans from "./FloorPlans/FloorPlans";
+import AddingAreas from "./FloorPlans/AddingAreas";
 import Squares from "./Squares/Squares";
 import BlocksAndFloors from "./BlocksAndFloors/BlocksAndFloors";
 import Building from "./Building/Building";
 import style from "./CardBuilding.module.css";
 import { Button, Tabs, Form, Modal } from "antd";
 import { Link, useLocation, useHistory, Prompt } from "react-router-dom";
-import { AllDataType, squareStatusType } from "../type";
+import { AllDataType, BlockType, squareStatusType } from "../type";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { useBeforeunload } from "react-beforeunload";
 
@@ -19,34 +19,54 @@ interface propType {
 }
 
 const CardBuilding = ({ allData, setAllData }: propType) => {
-  useBeforeunload(() =>
-    isBlocking ? `Вы потеряете внесенные изменения, продолжить?` : false
-  );
+  useBeforeunload(() => {
+    window.localStorage.setItem("activeTab", JSON.stringify(activeTab));
+    if (isBlocking) {
+      return `Вы потеряете внесенные изменения, продолжить?`;
+    } else {
+      return false;
+    }
+  });
   const location = useLocation();
   const id = location.pathname.slice(16);
 
+  const [valueEnteredBlock, setValueEnteredBlock] = useState<BlockType>({
+    savedField: [],
+    floorsVisible: [],
+  });
   const [activeTab, setActiveTab] = useState<string>("1");
   const [squareStatus, setSquareStatus] = useState<squareStatusType>({
     occupiedAreas: 0,
     freeAreas: 0,
     inaccessibleAreas: 0,
   });
-  const [currentData, setCurrentData] = useState<any | null>(null);
+  const [currentData, setCurrentData] = useState<any>(null);
   const [isBlocking, setIsBlocking] = useState(false);
   const [form] = Form.useForm();
   let history = useHistory();
 
   useEffect(() => {
+    const tab = window.localStorage.getItem("activeTab");
+    tab && setActiveTab(JSON.parse(tab));
+
     allData.forEach((el) => {
-      console.log("el", el.key, Number(id));
       if (el.key === Number(id)) {
-        const { key, squareStatus, occupancy, ...formData } = el;
-        setCurrentData(formData);
+        const {
+          key,
+          squareStatus,
+          occupancy,
+          valueEnteredBlock,
+          ...formData
+        } = el;
+        formData && setCurrentData(formData);
+        valueEnteredBlock && setValueEnteredBlock(valueEnteredBlock);
+        squareStatus && setSquareStatus(squareStatus);
         form.setFieldsValue(formData);
       }
     });
   }, []);
 
+  console.log(allData);
   const saveAndExitButton = (route: string) => {
     const data = form.getFieldsValue();
     const totalArea =
@@ -60,23 +80,23 @@ const CardBuilding = ({ allData, setAllData }: propType) => {
 
     form.validateFields([[`name`], [`address`], [`owner`]]).then(() => {
       const newDataArr = [...allData];
+
       newDataArr.filter((el, i) => {
         if (el.key === Number(id)) {
           newDataArr[i] = {
             key: Number(id),
             squareStatus: squareStatus,
             occupancy: `${occupancy} %`,
-            ...data,
+            valueEnteredBlock: valueEnteredBlock,
+            ...{ ...data, ...currentData },
           };
-          console.log("data", data, newDataArr);
         }
       });
 
       setAllData(newDataArr);
-      window.localStorage.setItem("allData", JSON.stringify(newDataArr));
-
-      route && history.push(route);
       setIsBlocking(false);
+      window.localStorage.setItem("allData", JSON.stringify(newDataArr));
+      route && history.push(route);
     });
   };
 
@@ -115,17 +135,23 @@ const CardBuilding = ({ allData, setAllData }: propType) => {
               <Building setIsBlocking={setIsBlocking} />
             </TabPane>
             <TabPane tab="Блоки и этажи" key="2">
-              <BlocksAndFloors form={form} />
+              <BlocksAndFloors
+                form={form}
+                currentData={currentData}
+                valueEnteredBlock={valueEnteredBlock}
+                setValueEnteredBlock={setValueEnteredBlock}
+              />
             </TabPane>
             <TabPane tab="Площади" key="3">
               <Squares
                 form={form}
+                currentData={currentData}
                 squareStatus={squareStatus}
                 setSquareStatus={setSquareStatus}
               />
             </TabPane>
             <TabPane tab="Планы этажей" key="4">
-              <FloorPlans />
+              <AddingAreas />
             </TabPane>
           </Tabs>
           <div className={`style.buttonWrapper`}>
