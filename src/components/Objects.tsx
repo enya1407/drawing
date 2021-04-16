@@ -14,6 +14,7 @@ const Objects = ({ allData, setAllData }: propType) => {
   useEffect(() => {
     window.localStorage.removeItem("activeTab");
   }, []);
+
   let history = useHistory();
   const viewButtonHandler = (key: any) => {};
   const changeButtonHandler = (key: any) =>

@@ -49,8 +49,11 @@ const FieldSquares = ({
     currentData?.squares[blockIndex][floorIndex] &&
     currentData?.squares[blockIndex][floorIndex][name];
 
+  const defaultCheckbox = defaultValue?.auxiliaryArea ? true : false;
+
   useEffect(() => {
     defaultValue && setValueSaved(true);
+    defaultValue && setStatus(defaultCheckbox);
   }, []);
 
   const saveChangesHandler = (name: number) => {
@@ -73,27 +76,9 @@ const FieldSquares = ({
           `auxiliaryArea`,
         ]);
 
-        //добавляем статус в первый раз
-
-        if (status === null && auxiliaryArea !== status && !defaultValue) {
-          if (auxiliaryArea) {
-            const newSquareStatus = {
-              ...squareStatus,
-              inaccessibleAreas: squareStatus.inaccessibleAreas + 1,
-            };
-            setStatus(true);
-            setSquareStatus(newSquareStatus);
-          } else {
-            const newSquareStatus = {
-              ...squareStatus,
-              freeAreas: squareStatus.freeAreas + 1,
-            };
-            setStatus(false);
-            setSquareStatus(newSquareStatus);
-          }
-        }
+        if (auxiliaryArea === status) return;
         //меняем статус
-        else if (status !== null && auxiliaryArea !== status) {
+        if (defaultValue || status !== null) {
           if (auxiliaryArea) {
             const newSquareStatus = {
               ...squareStatus,
@@ -111,6 +96,23 @@ const FieldSquares = ({
             setStatus(false);
             setSquareStatus(newSquareStatus);
           }
+          return;
+        }
+        //добавляем статус в первый раз
+        if (auxiliaryArea) {
+          const newSquareStatus = {
+            ...squareStatus,
+            inaccessibleAreas: squareStatus.inaccessibleAreas + 1,
+          };
+          setStatus(true);
+          setSquareStatus(newSquareStatus);
+        } else {
+          const newSquareStatus = {
+            ...squareStatus,
+            freeAreas: squareStatus.freeAreas + 1,
+          };
+          setStatus(false);
+          setSquareStatus(newSquareStatus);
         }
       });
   };
@@ -215,10 +217,7 @@ const FieldSquares = ({
       </Col>
       <Col span={4}>
         <Form.Item {...restField} name={[name, "auxiliaryArea"]}>
-          <Switch
-            disabled={valueSaved}
-            defaultChecked={defaultValue?.auxiliaryArea ? true : false}
-          />
+          <Switch disabled={valueSaved} defaultChecked={defaultCheckbox} />
         </Form.Item>
       </Col>
       <Col span={4}>

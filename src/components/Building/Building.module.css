@@ -19,15 +19,12 @@
 .characteristicsWrapper{
     flex-wrap: wrap;
     display: flex;
-    justify-content: space-between;
 }
 
 .item{
     width: 500px;
 }
 .placeForPhoto{
-    width: 500px;
-    height: 500px;
     border: grey 1px dashed;
     display:flex;align-items:center;
     position: relative;
@@ -57,3 +54,4 @@
     margin-right: 30px;
     text-align: start;
 }
+

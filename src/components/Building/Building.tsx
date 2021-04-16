@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import style from "./Building.module.css";
-import { DatePicker, Form, Input, Select, Upload, Popover } from "antd";
-import { InboxOutlined } from "@ant-design/icons";
+import { DatePicker, Form, Input, Select, Upload, Popover, Image } from "antd";
+import { InboxOutlined, PlusOutlined } from "@ant-design/icons";
 import TextArea from "antd/es/input/TextArea";
-import building from "../../image/building.jpg";
-import trashCan from "../../image/trashCan.svg";
+
 import { AllDataType } from "../../type";
+import ImageArea from "./ImageArea";
 
 const { Option } = Select;
 
@@ -20,10 +20,6 @@ const Building = ({ setIsBlocking }: propType) => {
     multiple: true,
     action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
   };
-
-  const [pictureVisibility, setPictureVisibility] = useState<boolean>(true);
-  const styleBuilding = pictureVisibility ? style.building : style.hidden;
-  const styleTrashCan = pictureVisibility ? style.trashCan : style.hidden;
 
   return (
     <div className={style.wrapper}>
@@ -60,6 +56,7 @@ const Building = ({ setIsBlocking }: propType) => {
       </section>
       <section className={style.section}>
         <p className={style.heading}>Характеристики</p>
+
         <div className={style.characteristicsWrapper}>
           <div>
             <Form.Item className={`${style.item}`} label="Класс" name="class">
@@ -130,16 +127,8 @@ const Building = ({ setIsBlocking }: propType) => {
               <DatePicker placeholder="Выберите дату" />
             </Form.Item>
           </div>
-          <div className={style.placeForPhoto}>
-            <img src={building} className={styleBuilding} />{" "}
-            <Popover content="Удалить изображение">
-              <img
-                src={trashCan}
-                className={styleTrashCan}
-                onClick={() => setPictureVisibility(false)}
-              />
-            </Popover>
-          </div>
+
+          <ImageArea />
         </div>
       </section>
       <section className={style.section}>

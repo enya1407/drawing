@@ -66,7 +66,6 @@ const CardBuilding = ({ allData, setAllData }: propType) => {
     });
   }, []);
 
-  console.log(allData);
   const saveAndExitButton = (route: string) => {
     const data = form.getFieldsValue();
     const totalArea =
@@ -88,7 +87,7 @@ const CardBuilding = ({ allData, setAllData }: propType) => {
             squareStatus: squareStatus,
             occupancy: `${occupancy} %`,
             valueEnteredBlock: valueEnteredBlock,
-            ...{ ...data, ...currentData },
+            ...{ ...currentData, ...data },
           };
         }
       });
